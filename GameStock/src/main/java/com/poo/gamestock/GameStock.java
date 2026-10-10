@@ -4,7 +4,7 @@
 
 package com.poo.gamestock;
 
-/**
+/**MAIN
  *
  * @author Emprendedor
  */

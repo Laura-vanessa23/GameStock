@@ -5,7 +5,7 @@
 package com.poo.gamestock.modelo;
 
 /**
- *
+ *ss
  * @author Emprendedor
  */
 public class DetalleFactura {
