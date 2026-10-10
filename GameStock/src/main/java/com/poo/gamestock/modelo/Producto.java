@@ -19,29 +19,44 @@ public abstract class Producto {
     public Producto() {
     }
 
-    // Constructor parametrizado
+    // Constructor parametrizado con validaciones
     public Producto(String codigo, String nombre, double precio, int stock, String plataforma) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.stock = stock;
-        this.plataforma = plataforma;
+        setCodigo(codigo);
+        setNombre(nombre);
+        setPrecio(precio);
+        setStock(stock);
+        setPlataforma(plataforma);
     }
 
     // Método abstracto que las subclases deben implementar obligatoriamente
     public abstract double calcularPrecioFinal();
+
+    // Métodos solicitados por el TAD y UML
+    public int consultarStock() {
+        return this.stock;
+    }
+
+    public void actualizarStock(int cantidad) {
+        if (this.stock + cantidad < 0) {
+            throw new IllegalArgumentException("El stock no puede quedar negativo.");
+        }
+        this.stock += cantidad;
+    }
 
     // Método general para mostrar información
     public void mostrarInfo() {
         System.out.println("Código: " + codigo + " | Nombre: " + nombre + " | Precio: $" + precio + " | Stock: " + stock + " | Plataforma: " + plataforma);
     }
 
-    // Getters y Setters
+    // Getters y Setters con validaciones
     public String getCodigo() {
         return codigo;
     }
 
     public void setCodigo(String codigo) {
+        if (codigo == null || codigo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El código del producto no puede estar vacío.");
+        }
         this.codigo = codigo;
     }
 
@@ -50,6 +65,9 @@ public abstract class Producto {
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacío.");
+        }
         this.nombre = nombre;
     }
 
@@ -58,6 +76,9 @@ public abstract class Producto {
     }
 
     public void setPrecio(double precio) {
+        if (precio <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
+        }
         this.precio = precio;
     }
 
@@ -66,6 +87,9 @@ public abstract class Producto {
     }
 
     public void setStock(int stock) {
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo.");
+        }
         this.stock = stock;
     }
 
@@ -74,6 +98,9 @@ public abstract class Producto {
     }
 
     public void setPlataforma(String plataforma) {
+        if (plataforma == null || plataforma.trim().isEmpty()) {
+            throw new IllegalArgumentException("La plataforma no puede estar vacía.");
+        }
         this.plataforma = plataforma;
     }
 }
