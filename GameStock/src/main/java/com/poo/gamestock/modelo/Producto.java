@@ -28,10 +28,10 @@ public abstract class Producto {
         setPlataforma(plataforma);
     }
 
-    // Método abstracto que las subclases deben implementar obligatoriamente
+    
     public abstract double calcularPrecioFinal();
 
-    // Métodos solicitados por el TAD y UML
+   
     public int consultarStock() {
         return this.stock;
     }

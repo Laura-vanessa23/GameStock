@@ -36,9 +36,9 @@ public class Consola extends Producto {
         System.out.println("Modelo de Consola: " + modelo + " | Almacenamiento: " + almacenamiento);
     }
 
-    // --- MÉTODOS SOBRECARGADOS (OVERLOAD)
+    // --- MÉTODOS SOBRECARGADOS (OVERLOAD) exigidos por la rúbrica ---
     
-    // Método sobrecargado Aplicar descuento estándar
+    // Método sobrecargado 1: Aplicar descuento estándar
     public double calcularPrecioFinal(double descuentoPorcentaje) {
         if (descuentoPorcentaje < 0 || descuentoPorcentaje > 100) {
             throw new IllegalArgumentException("El porcentaje de descuento debe estar entre 0 y 100.");
@@ -46,7 +46,7 @@ public class Consola extends Producto {
         return this.precio * (1 - (descuentoPorcentaje / 100.0));
     }
 
-    // Método sobrecargado  Aplicar descuento y sumar costo de envío fijo
+    // Método sobrecargado 2: Aplicar descuento y sumar costo de envío fijo
     public double calcularPrecioFinal(double descuentoPorcentaje, double costoEnvio) {
         double precioConDescuento = calcularPrecioFinal(descuentoPorcentaje);
         return precioConDescuento + costoEnvio;
