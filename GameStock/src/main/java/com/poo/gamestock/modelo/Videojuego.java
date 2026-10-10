@@ -6,7 +6,7 @@ package com.poo.gamestock.modelo;
 
 /**
  *
- * @author Emprendedor
+ * LAURA ARIZA
  */
 public class Videojuego extends Producto {
     private String genero;

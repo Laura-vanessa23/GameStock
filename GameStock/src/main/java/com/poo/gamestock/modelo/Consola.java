@@ -6,7 +6,7 @@ package com.poo.gamestock.modelo;
 
 /**
  *
- * @author Emprendedor
+ * LAURA ARIZA
  */
 public class Consola extends Producto {
     private String modelo;
@@ -28,7 +28,7 @@ public class Consola extends Producto {
     // Sobrescritura del método abstracto de Producto
     @Override
     public double calcularPrecioFinal() {
-        // Las consolas mantienen su precio base o se les puede sumar algún impuesto de importación si se desea
+      
         return this.precio;
     }
 

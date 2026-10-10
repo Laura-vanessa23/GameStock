@@ -6,7 +6,7 @@ package com.poo.gamestock.modelo;
 
 /**
  *
- * @author Emprendedor
+ * LAURA ARIZA
  */
 public abstract class Producto {
     protected String codigo;
