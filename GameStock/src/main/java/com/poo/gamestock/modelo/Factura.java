@@ -48,7 +48,7 @@ public class Factura {
         }
         return total;
     }
-public String generarComprobante() {
+    public String generarComprobante() {
     if (detalles.isEmpty()) {
         throw new IllegalArgumentException("La factura debe tener al menos un detalle");
     }
