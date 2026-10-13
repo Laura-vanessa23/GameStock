@@ -4,10 +4,9 @@
  */
 package com.poo.gamestock.modelo;
 
-/**
- *
- * @author Emprendedor
- */
+
+import java.util.Date;
+
 public class Vendedor {
     private int idEmpleado;
     private String nombre;
@@ -18,18 +17,30 @@ public class Vendedor {
 
     // Constructor parametrizado
     public Vendedor(int idEmpleado, String nombre) {
+        setIdEmpleado(idEmpleado);
+        setNombre(nombre);
+    }
+
+    // Getters y Setters con validaciones
+    public int getIdEmpleado() { return idEmpleado; }
+    public void setIdEmpleado(int idEmpleado) {
+        if (idEmpleado <= 0) {
+            throw new IllegalArgumentException("El código de empleado debe ser mayor a 0.");
+        }
         this.idEmpleado = idEmpleado;
+    }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del vendedor no puede estar vacío.");
+        }
         this.nombre = nombre;
     }
 
-    // Getters y Setters
-    public int getIdEmpleado() { return idEmpleado; }
-    public void setIdEmpleado(int idEmpleado) { this.idEmpleado = idEmpleado; }
-
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
-    public void registrarVenta() {
-        // Lógica para registrar venta
+    public Factura registrarVenta(String numeroFactura, Cliente cliente) {
+        System.out.println("Venta procesada por el vendedor: " + this.nombre);
+        // Crea y retorna la factura asociada
+        return new Factura(numeroFactura, new Date(), cliente, this);
     }
 }

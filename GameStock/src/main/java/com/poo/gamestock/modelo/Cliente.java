@@ -4,51 +4,77 @@
  */
 package com.poo.gamestock.modelo;
 
-/**
- *
- * @author Emprendedor
- */
+
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cliente {
     private int id;
     private String nombre;
     private String documento;
     private String correo;
     private String telefono;
+    private List<Factura> historialCompras; // Dependencia con Factura
 
     // Constructor por defecto
     public Cliente() {
+        this.historialCompras = new ArrayList<>();
     }
 
     // Constructor parametrizado
     public Cliente(int id, String nombre, String documento, String correo, String telefono) {
         this.id = id;
-        this.nombre = nombre;
-        this.documento = documento;
-        this.correo = correo;
+        setNombre(nombre);
+        setDocumento(documento);
+        setCorreo(correo);
         this.telefono = telefono;
+        this.historialCompras = new ArrayList<>();
     }
 
-    // Getters y Setters
+    // Getters y Setters con validaciones
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
     public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del cliente no puede estar vacío.");
+        }
+        this.nombre = nombre;
+    }
 
     public String getDocumento() { return documento; }
-    public void setDocumento(String documento) { this.documento = documento; }
+    public void setDocumento(String documento) {
+        if (documento == null || documento.trim().isEmpty()) {
+            throw new IllegalArgumentException("El documento de identidad no puede estar vacío.");
+        }
+        this.documento = documento;
+    }
 
     public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public void setCorreo(String correo) {
+        if (correo == null || !correo.contains("@") || !correo.contains(".")) {
+            throw new IllegalArgumentException("El formato del correo electrónico no es válido.");
+        }
+        this.correo = correo;
+    }
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
     
     public void registrarCliente() {
-        // Lógica de registro
+        System.out.println("Cliente registrado correctamente: " + this.nombre);
     }
 
-    public void consultarHistorialCompras() {
-        // Lógica de historial
+    public List<Factura> consultarHistorialCompras() {
+        // Devuelve una copia del historial de facturas del cliente
+        return new ArrayList<>(historialCompras);
+    }
+    
+    public void agregarFacturaAlHistorial(Factura factura) {
+        if (factura != null) {
+            this.historialCompras.add(factura);
+        }
     }
 }

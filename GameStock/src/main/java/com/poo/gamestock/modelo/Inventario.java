@@ -4,6 +4,7 @@
  */
 package com.poo.gamestock.modelo;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,35 +19,57 @@ public class Inventario {
         this.fechaUltimaActualizacion = new Date();
     }
 
-    // Métodos de gestión de inventario (Agregación con Producto)
+    // Agregar producto validando códigos repetidos (Regla del TAD)
     public void agregarProducto(Producto p) {
+        if (p == null) return;
+        
+        for (Producto prod : productos) {
+            if (prod.getCodigo().equalsIgnoreCase(p.getCodigo())) {
+                throw new IllegalArgumentException("Error: Ya existe un producto registrado con el código " + p.getCodigo());
+            }
+        }
+        
         productos.add(p);
         this.fechaUltimaActualizacion = new Date();
+        System.out.println("Producto agregado al inventario con éxito.");
     }
 
+    // Eliminar producto con validación de existencia
     public void eliminarProducto(String codigo) {
-        productos.removeIf(p -> p.getCodigo().equals(codigo));
-        this.fechaUltimaActualizacion = new Date();
+        Producto p = buscarProducto(codigo);
+        if (p != null) {
+            productos.remove(p);
+            this.fechaUltimaActualizacion = new Date();
+            System.out.println("Producto con código " + codigo + " eliminado del inventario.");
+        } else {
+            System.out.println("Aviso: No se puede eliminar. El producto con código " + codigo + " no se encuentra registrado.");
+        }
     }
 
     public Producto buscarProducto(String codigo) {
         for (Producto p : productos) {
-            if (p.getCodigo().equals(codigo)) {
+            if (p.getCodigo().equalsIgnoreCase(codigo)) {
                 return p;
             }
         }
         return null; 
     }
 
+    // Actualizar stock con validación de existencia
     public void actualizarStock(String codigo, int cantidad) {
         Producto p = buscarProducto(codigo);
         if (p != null) {
             p.setStock(cantidad);
+            this.fechaUltimaActualizacion = new Date();
+            System.out.println("Stock actualizado para el producto: " + codigo);
+        } else {
+            System.out.println("Aviso: No se pudo actualizar. El producto con código " + codigo + " no existe en el inventario.");
         }
     }
 
+    // Devuelve una copia de la lista para proteger la encapsulación
     public List<Producto> listarProductos() {
-        return productos;
+        return new ArrayList<>(productos);
     }
 
     // Getters y Setters
