@@ -62,7 +62,7 @@ public class Videojuego extends Producto {
     }
 
     public void setFormato(String formato) {
-        if (formato == null || (!formato.equalsIgnoreCase("Físico") && !formato.equalsIgnoreCase("Digital"))) {
+        if (formato == null || (!formato.equalsIgnoreCase("Fisico") && !formato.equalsIgnoreCase("Digital"))) {
             throw new IllegalArgumentException("El formato sólo admite los valores 'Físico' o 'Digital'.");
         }
         this.formato = formato;
