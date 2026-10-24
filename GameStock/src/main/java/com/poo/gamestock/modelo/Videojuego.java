@@ -27,8 +27,8 @@ public class Videojuego extends Producto {
         if (genero == null || genero.trim().isEmpty()) {
             throw new IllegalArgumentException("El género del videojuego no puede estar vacío.");
         }
-        if (formato == null || (!formato.equalsIgnoreCase("Físico") && !formato.equalsIgnoreCase("Digital"))) {
-            throw new IllegalArgumentException("El formato sólo admite los valores 'Físico' o 'Digital'.");
+        if (formato == null || (!formato.equalsIgnoreCase("Fisico") && !formato.equalsIgnoreCase("Digital"))) {
+            throw new IllegalArgumentException("El formato sólo admite los valores 'Fisico' o 'Digital'.");
         }
         if (clasificacionEdad == null || clasificacionEdad.trim().isEmpty()) {
             throw new IllegalArgumentException("La clasificación de edad no puede estar vacía.");

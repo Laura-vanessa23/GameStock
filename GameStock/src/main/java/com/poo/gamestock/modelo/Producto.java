@@ -35,7 +35,7 @@ public abstract class Producto {
         }
         if (plataforma == null || plataforma.trim().isEmpty()) {
             //es una alerta 
-            throw new IllegalArgumentException("La plataforma no puede estar vacía.");
+            throw new IllegalArgumentException("La plataforma no puede estar vacía.");   
         }
 
         this.codigo = codigo;
