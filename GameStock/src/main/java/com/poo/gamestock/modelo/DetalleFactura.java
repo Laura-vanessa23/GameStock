@@ -3,7 +3,7 @@ package com.poo.gamestock.modelo;
 
 /**
  *
- * @author Jesús
+ * @author Jesús Gudiño
  */
 public class DetalleFactura {
     

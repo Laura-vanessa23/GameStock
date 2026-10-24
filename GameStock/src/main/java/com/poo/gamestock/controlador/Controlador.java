@@ -123,7 +123,12 @@ public class Controlador {
      //---6.Actualizar Stock
      private void actualizarStock() {
         String codigo = vista.leerTexto("Codigo del producto");
-        int nuevoStock = vista.leerEntero("Nuevo stock");
+        Producto producto = inventario.buscarProducto(codigo);
+        if (producto == null) {
+            vista.mostrarMensaje("Producto no encontrado");
+            return;
+        }
+        int nuevoStock = vista.leerEntero("Nuevo stock (actual: " + producto.getStock() + ")");
         inventario.actualizarStock(codigo, nuevoStock);
     }
      
@@ -247,8 +252,8 @@ public class Controlador {
         inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
         inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 
-        Vendedor v1 = new Vendedor(1, "Carlos Perez");
-        Vendedor v2 = new Vendedor(2, "Maria Lopez");
+        Vendedor v1 = new Vendedor(1, "Laura Ariza");
+        Vendedor v2 = new Vendedor(2, "Gabriel Rojas");
         vendedores.add(v1);
         vendedores.add(v2);
 
@@ -268,7 +273,7 @@ public class Controlador {
 
         Factura f3 = v1.registrarVenta("F-3", c2);
         agregarLinea(f3, inventario.buscarProducto("CS002"), 1);
-        agregarLinea(f3, inventario.buscarProducto("VJ001"), 2);
+        agregarLinea(f3, inventario.buscarProducto("VJ002"), 2);
         guardarFactura(f3);
     }
     
