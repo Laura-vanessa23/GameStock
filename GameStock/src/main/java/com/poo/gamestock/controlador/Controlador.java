@@ -40,9 +40,15 @@ public class Controlador {
             try {
                 switch (opcion) {
                     case 1 -> listarProductos();
-                    case 2 -> registrarCliente();
-                    case 3 -> registrarVenta();
-                    case 4 -> historialCliente();
+                    case 2 -> agregarVideojuego();
+                    case 3 -> agregarConsola();
+                    case 4 -> buscarProducto();
+                    case 5 -> eliminarProducto();
+                    case 6 -> actualizarStock();
+                    case 7 -> registrarCliente();
+                    case 8 -> registrarVenta();
+                    case 9 -> verFacturas();
+                    case 10 -> historialCliente();
                     case 0 -> vista.mostrarMensaje("Hasta pronto");
                     default -> vista.mostrarMensaje("Opcion no valida");
                 }
@@ -52,6 +58,8 @@ public class Controlador {
         } while (opcion != 0);
     }
 
+    
+        //---1. Listar productos---
     private void listarProductos() {
         if (inventario.listarProductos().isEmpty()) {
             vista.mostrarMensaje("El inventario esta vacio");
@@ -62,7 +70,67 @@ public class Controlador {
             vista.mostrarMensaje("");
         }
     }
+    
+    // ---2. Agregar Videojuego---
+     private void agregarVideojuego() {
+        String codigo = vista.leerTexto("Codigo");
+        String nombre = vista.leerTexto("Nombre");
+        double precio = vista.leerDecimal("Precio");
+        int stock = vista.leerEntero("Stock");
+        String plataforma = vista.leerTexto("Plataforma");
+        String genero = vista.leerTexto("Genero");
+        String formato = vista.leerTexto("Formato (Fisico o Digital)");
+        String clasificacion = vista.leerTexto("Clasificacion de edad");
 
+        Videojuego juego = new Videojuego(codigo, nombre, precio, stock, plataforma,
+                genero, formato, clasificacion);
+        inventario.agregarProducto(juego);
+    }
+     
+     //3.---Agregar consola---
+     private void agregarConsola() {
+        String codigo = vista.leerTexto("Codigo");
+        String nombre = vista.leerTexto("Nombre");
+        double precio = vista.leerDecimal("Precio");
+        int stock = vista.leerEntero("Stock");
+        String plataforma = vista.leerTexto("Plataforma");
+        String modelo = vista.leerTexto("Modelo");
+        String almacenamiento = vista.leerTexto("Almacenamiento");
+
+        Consola consola = new Consola(codigo, nombre, precio, stock, plataforma,
+                modelo, almacenamiento);
+        inventario.agregarProducto(consola);
+    }
+     
+     //4.---Buscar Producto---
+     private void buscarProducto() {
+        String codigo = vista.leerTexto("Codigo del producto");
+        Producto producto = inventario.buscarProducto(codigo);
+        if (producto == null) {
+            vista.mostrarMensaje("Producto no encontrado");
+            return;
+        }
+        producto.mostrarInfo();
+        vista.mostrarMensaje("Precio final: $" + (long) producto.calcularPrecioFinal());
+    }
+     
+     //---5.Eliminar Producto---
+     private void eliminarProducto() {
+        String codigo = vista.leerTexto("Codigo del producto a eliminar");
+        inventario.eliminarProducto(codigo);
+    }
+    
+     //---6.Actualizar Stock
+     private void actualizarStock() {
+        String codigo = vista.leerTexto("Codigo del producto");
+        int nuevoStock = vista.leerEntero("Nuevo stock");
+        inventario.actualizarStock(codigo, nuevoStock);
+    }
+     
+     
+     
+     
+    //---7.Registrar Cliente---
     private void registrarCliente() {
         String nombre = vista.leerTexto("Nombre");
         String documento = vista.leerTexto("Documento");
@@ -76,7 +144,8 @@ public class Controlador {
         clientes.add(cliente);
         cliente.registrarCliente();
     }
-
+    
+    //---8.Registrar Venta---
     private void registrarVenta() {
         Vendedor vendedor = buscarVendedor(vista.leerEntero("Codigo del vendedor"));
         if (vendedor == null) {
@@ -114,7 +183,20 @@ public class Controlador {
         guardarFactura(factura);
         vista.mostrarMensaje(factura.generarComprobante());
     }
-
+    
+    //---9.Ver Facturas
+    private void verFacturas() {
+        if (facturas.isEmpty()) {
+            vista.mostrarMensaje("Todavia no hay facturas");
+            return;
+        }
+        for (Factura f : facturas) {
+            vista.mostrarMensaje(f.generarComprobante());
+            vista.mostrarMensaje("");
+        }
+    }
+    
+    //---10.Historial del Cliente---
     private void historialCliente() {
         Cliente cliente = buscarCliente(vista.leerTexto("Documento del cliente"));
         if (cliente == null) {

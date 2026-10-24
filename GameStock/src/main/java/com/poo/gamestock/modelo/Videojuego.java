@@ -25,13 +25,13 @@ public class Videojuego extends Producto {
 
         // Validaciones directas en el constructor
         if (genero == null || genero.trim().isEmpty()) {
-            throw new IllegalArgumentException("El género del videojuego no puede estar vacío.");
+            throw new IllegalArgumentException("El género del videojuego no puede estar vacio.");
         }
         if (formato == null || (!formato.equalsIgnoreCase("Fisico") && !formato.equalsIgnoreCase("Digital"))) {
             throw new IllegalArgumentException("El formato sólo admite los valores 'Fisico' o 'Digital'.");
         }
         if (clasificacionEdad == null || clasificacionEdad.trim().isEmpty()) {
-            throw new IllegalArgumentException("La clasificación de edad no puede estar vacía.");
+            throw new IllegalArgumentException("La clasificacion de edad no puede estar vacia.");
         }
 
         this.genero = genero;
@@ -50,7 +50,7 @@ public class Videojuego extends Producto {
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
-        System.out.println("Género: " + genero + " | Formato: " + formato + " | Clasificación: " + clasificacionEdad);
+        System.out.println("Genero: " + genero + " | Formato: " + formato + " | Clasificacion: " + clasificacionEdad);
     }
 
     public boolean verificarDisponibilidadDigital() {

@@ -9,7 +9,7 @@ import com.poo.gamestock.controlador.Controlador;
 
 /**MAIN
  *
- * @author Emprendedor
+ * @author Jesus Gudiño
  */
 public class GameStock {
 
