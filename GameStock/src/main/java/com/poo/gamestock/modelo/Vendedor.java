@@ -11,11 +11,11 @@ public class Vendedor {
     private int idEmpleado;
     private String nombre;
 
-    // Constructor por defecto
+
     public Vendedor() {
     }
 
-    // Constructor parametrizado
+  
     public Vendedor(int idEmpleado, String nombre) {
         setIdEmpleado(idEmpleado);
         setNombre(nombre);
