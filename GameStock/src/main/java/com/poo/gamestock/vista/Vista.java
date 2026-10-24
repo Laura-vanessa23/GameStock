@@ -45,10 +45,13 @@ public class Vista {
     }
  
     public double leerDecimal(String pregunta) {
-        System.out.print(pregunta + ": ");
-        double numero = scanner.nextDouble();
-        scanner.nextLine();
-        return numero;
+       while (true) {
+            try {
+                return Double.parseDouble(leerTexto(pregunta).trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero valido.");
+            }
+        }
     }
     
 }
