@@ -7,7 +7,7 @@ import java.util.Scanner;
  */
 public class Vista {
     
-    private Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in, "UTF-8");
  
     public void mostrarMenu() {
         System.out.println();
@@ -35,10 +35,13 @@ public class Vista {
     }
  
     public int leerEntero(String pregunta) {
-        System.out.print(pregunta + ": ");
-        int numero = scanner.nextInt();
-        scanner.nextLine();
-        return numero;
+    while (true) {
+        try {
+            return Integer.parseInt(leerTexto(pregunta).trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Ingrese un número entero válido.");
+        }
+    }
     }
  
     public double leerDecimal(String pregunta) {

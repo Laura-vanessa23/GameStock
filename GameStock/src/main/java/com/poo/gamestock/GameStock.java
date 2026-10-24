@@ -1,8 +1,11 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
 package com.poo.gamestock;
+
+import com.poo.gamestock.vista.Vista;
+import com.poo.gamestock.controlador.Controlador;
 
 /**MAIN
  *
@@ -11,8 +14,8 @@ package com.poo.gamestock;
 public class GameStock {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        
-        
+     Vista vista = new Vista();
+    Controlador controlador = new Controlador(vista);
+    controlador.iniciar();
     }
 }
