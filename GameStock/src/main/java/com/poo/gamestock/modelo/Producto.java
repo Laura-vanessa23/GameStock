@@ -9,7 +9,7 @@ package com.poo.gamestock.modelo;
  * LAURA ARIZA
  */
 public abstract class Producto {
-    protected String codigo;
+    protected String codigo; // acceso dif aluml por herencia para las subclases
     protected String nombre;
     protected double precio;
     protected int stock;
@@ -19,16 +19,33 @@ public abstract class Producto {
     public Producto() {
     }
 
-    // Constructor parametrizado con validaciones
+    // Constructor  con validaciones directas
     public Producto(String codigo, String nombre, double precio, int stock, String plataforma) {
-        setCodigo(codigo);
-        setNombre(nombre);
-        setPrecio(precio);
-        setStock(stock);
-        setPlataforma(plataforma);
+        if (codigo == null || codigo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El código del producto no puede estar vacío.");
+        }
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del producto no puede estar vacío.");
+        }
+        if (precio <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
+        }
+        if (stock < 0) {
+            throw new IllegalArgumentException("El stock no puede ser negativo."); // Detiene la ejecución si se rompe la regla de negocio
+        }
+        if (plataforma == null || plataforma.trim().isEmpty()) {
+            //es una alerta 
+            throw new IllegalArgumentException("La plataforma no puede estar vacía.");
+        }
+
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+        this.plataforma = plataforma;
     }
 
-    
+    // Método abstracto 
     public abstract double calcularPrecioFinal();
 
    
@@ -43,20 +60,17 @@ public abstract class Producto {
         this.stock += cantidad;
     }
 
-    // Método general para mostrar información
+    // Mostrar información
     public void mostrarInfo() {
         System.out.println("Código: " + codigo + " | Nombre: " + nombre + " | Precio: $" + precio + " | Stock: " + stock + " | Plataforma: " + plataforma);
     }
 
-    // Getters y Setters con validaciones
+    // Getters y Setters 
     public String getCodigo() {
         return codigo;
     }
 
     public void setCodigo(String codigo) {
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código del producto no puede estar vacío.");
-        }
         this.codigo = codigo;
     }
 
@@ -65,9 +79,6 @@ public abstract class Producto {
     }
 
     public void setNombre(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del producto no puede estar vacío.");
-        }
         this.nombre = nombre;
     }
 
@@ -76,9 +87,6 @@ public abstract class Producto {
     }
 
     public void setPrecio(double precio) {
-        if (precio <= 0) {
-            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
-        }
         this.precio = precio;
     }
 
@@ -87,9 +95,6 @@ public abstract class Producto {
     }
 
     public void setStock(int stock) {
-        if (stock < 0) {
-            throw new IllegalArgumentException("El stock no puede ser negativo.");
-        }
         this.stock = stock;
     }
 
@@ -98,9 +103,6 @@ public abstract class Producto {
     }
 
     public void setPlataforma(String plataforma) {
-        if (plataforma == null || plataforma.trim().isEmpty()) {
-            throw new IllegalArgumentException("La plataforma no puede estar vacía.");
-        }
         this.plataforma = plataforma;
     }
 }

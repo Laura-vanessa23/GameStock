@@ -17,12 +17,21 @@ public class Consola extends Producto {
         super();
     }
 
-    // Constructor parametrizado con validaciones
+    // Constructor  con validaciones directas
     public Consola(String codigo, String nombre, double precio, int stock, String plataforma, 
                    String modelo, String almacenamiento) {
-        super(codigo, nombre, precio, stock, plataforma);
-        setModelo(modelo);
-        setAlmacenamiento(almacenamiento);
+        super(codigo, nombre, precio, stock, plataforma); 
+
+        // Validaciones directas en el constructor
+        if (modelo == null || modelo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El modelo de la consola no puede estar vacío.");
+        }
+        if (almacenamiento == null || almacenamiento.trim().isEmpty()) {
+            throw new IllegalArgumentException("El almacenamiento de la consola no puede estar vacío.");
+        }
+
+        this.modelo = modelo;
+        this.almacenamiento = almacenamiento;
     }
 
     @Override
@@ -36,9 +45,7 @@ public class Consola extends Producto {
         System.out.println("Modelo de Consola: " + modelo + " | Almacenamiento: " + almacenamiento);
     }
 
-    // --- MÉTODOS SOBRECARGADOS (OVERLOAD) exigidos por la rúbrica ---
-    
-    // Método sobrecargado 1: Aplicar descuento estándar
+    // Método sobrecargado 1
     public double calcularPrecioFinal(double descuentoPorcentaje) {
         if (descuentoPorcentaje < 0 || descuentoPorcentaje > 100) {
             throw new IllegalArgumentException("El porcentaje de descuento debe estar entre 0 y 100.");
@@ -46,7 +53,7 @@ public class Consola extends Producto {
         return this.precio * (1 - (descuentoPorcentaje / 100.0));
     }
 
-    // Método sobrecargado 2: Aplicar descuento y sumar costo de envío fijo
+    // Método sobrecargado 2 Aplica descuento y suma costo de envío fijo
     public double calcularPrecioFinal(double descuentoPorcentaje, double costoEnvio) {
         double precioConDescuento = calcularPrecioFinal(descuentoPorcentaje);
         return precioConDescuento + costoEnvio;
@@ -56,15 +63,12 @@ public class Consola extends Producto {
         return this.almacenamiento != null && !this.almacenamiento.isEmpty();
     }
 
-    // Getters y Setters con validaciones
+    // Getters y Setters 
     public String getModelo() {
         return modelo;
     }
 
     public void setModelo(String modelo) {
-        if (modelo == null || modelo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El modelo de la consola no puede estar vacío.");
-        }
         this.modelo = modelo;
     }
 
@@ -73,9 +77,6 @@ public class Consola extends Producto {
     }
 
     public void setAlmacenamiento(String almacenamiento) {
-        if (almacenamiento == null || almacenamiento.trim().isEmpty()) {
-            throw new IllegalArgumentException("El almacenamiento de la consola no puede estar vacío.");
-        }
         this.almacenamiento = almacenamiento;
     }
 }

@@ -18,12 +18,24 @@ public class Videojuego extends Producto {
         super();
     }
 
-    // Constructor parametrizado con validaciones
+    // Constructor con validaciones directas
     public Videojuego(String codigo, String nombre, double precio, int stock, String plataforma, 
                       String genero, String formato, String clasificacionEdad) {
-        super(codigo, nombre, precio, stock, plataforma);
-        setGenero(genero);
-        setFormato(formato);
+        super(codigo, nombre, precio, stock, plataforma); // Valida los atributos heredados de Producto
+
+        // Validaciones directas en el constructor
+        if (genero == null || genero.trim().isEmpty()) {
+            throw new IllegalArgumentException("El género del videojuego no puede estar vacío.");
+        }
+        if (formato == null || (!formato.equalsIgnoreCase("Físico") && !formato.equalsIgnoreCase("Digital"))) {
+            throw new IllegalArgumentException("El formato sólo admite los valores 'Físico' o 'Digital'.");
+        }
+        if (clasificacionEdad == null || clasificacionEdad.trim().isEmpty()) {
+            throw new IllegalArgumentException("La clasificación de edad no puede estar vacía.");
+        }
+
+        this.genero = genero;
+        this.formato = formato;
         this.clasificacionEdad = clasificacionEdad;
     }
 
@@ -45,15 +57,12 @@ public class Videojuego extends Producto {
         return this.formato != null && this.formato.equalsIgnoreCase("Digital") && this.stock > 0;
     }
 
-    // Getters y Setters con validaciones específicas
+    // Getters y Setters 
     public String getGenero() {
         return genero;
     }
 
     public void setGenero(String genero) {
-        if (genero == null || genero.trim().isEmpty()) {
-            throw new IllegalArgumentException("El género del videojuego no puede estar vacío.");
-        }
         this.genero = genero;
     }
 
@@ -62,9 +71,6 @@ public class Videojuego extends Producto {
     }
 
     public void setFormato(String formato) {
-        if (formato == null || (!formato.equalsIgnoreCase("Fisico") && !formato.equalsIgnoreCase("Digital"))) {
-            throw new IllegalArgumentException("El formato sólo admite los valores 'Físico' o 'Digital'.");
-        }
         this.formato = formato;
     }
 
