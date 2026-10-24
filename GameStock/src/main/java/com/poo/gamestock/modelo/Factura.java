@@ -58,10 +58,10 @@ public class Factura {
     texto += "Vendedor: " + vendedor.getNombre() + "\n";
     texto += "-------------------------------\n";
     for (DetalleFactura d : detalles) {
-        texto += d.getCantidad() + " x " + d.getProducto().getNombre() + " = $" + (long) d.getSubtotal() + "\n";
+        texto += d.getCantidad() + " x " + d.getProducto().getNombre() + " = $" + String.format("%,.2f", d.getSubtotal()) + "\n";
     }
     texto += "-------------------------------\n";
-    texto += "TOTAL: $" + (long) total + "\n";
+    texto += "TOTAL: $" + String.format("%,.2f", total) + "\n";
     texto += "===============================";
     return texto;
 }

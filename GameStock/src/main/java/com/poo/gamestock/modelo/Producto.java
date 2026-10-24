@@ -62,7 +62,7 @@ public abstract class Producto {
 
     // Mostrar información
     public void mostrarInfo() {
-        System.out.println("Codigo: " + codigo + " | Nombre: " + nombre + " | Precio: $" + precio + " | Stock: " + stock + " | Plataforma: " + plataforma);
+        System.out.println("Codigo: " + codigo + " | Nombre: " + nombre + " | Precio: $" + String.format("%,.2f", precio) + " | Stock: " + stock + " | Plataforma: " + plataforma);
     }
 
     // Getters y Setters 

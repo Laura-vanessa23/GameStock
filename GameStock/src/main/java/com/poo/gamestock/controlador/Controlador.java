@@ -66,7 +66,7 @@ public class Controlador {
         }
         for (Producto p : inventario.listarProductos()) {
             p.mostrarInfo();
-            vista.mostrarMensaje("Precio final: $" + (long) p.calcularPrecioFinal());
+            vista.mostrarMensaje("Precio final: $" + String.format("%,.2f", p.calcularPrecioFinal()));
             vista.mostrarMensaje("");
         }
     }
@@ -242,10 +242,10 @@ public class Controlador {
     }
 
     private void cargarDatos() {
-        inventario.agregarProducto(new Videojuego("VJ001", "God of War Ragnarok", 250000, 10, "PlayStation 5", "Accion", "Fisico", "M"));
-        inventario.agregarProducto(new Videojuego("VJ002", "Forza Horizon 5", 200000, 8, "Xbox Series X", "Carreras", "Digital", "E"));
-        inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2300000, 5, "PlayStation 5", "Slim", "1TB"));
-        inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1500000, 4, "Xbox Series X", "Series S", "512GB"));
+        inventario.agregarProducto(new Videojuego("VJ001", "God of War Ragnarok", 219000, 10, "PlayStation 5", "Accion", "Fisico", "M"));
+        inventario.agregarProducto(new Videojuego("VJ002", "Forza Horizon 6", 279900, 8, "Xbox Series X|S", "Carreras", "Digital", "E"));
+        inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
+        inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 
         Vendedor v1 = new Vendedor(1, "Carlos Perez");
         Vendedor v2 = new Vendedor(2, "Maria Lopez");
