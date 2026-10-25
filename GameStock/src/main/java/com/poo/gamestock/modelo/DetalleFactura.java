@@ -44,16 +44,25 @@ public class DetalleFactura {
     }
 
     public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    if (cantidad <= 0) {
+        throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
     }
+    if (producto != null && cantidad > producto.getStock()) {
+        throw new IllegalArgumentException("La cantidad supera el stock disponible");
+    }
+    this.cantidad = cantidad;
+}
 
     public double getPrecioUnitario() {
         return precioUnitario;
     }
 
     public void setPrecioUnitario(double precioUnitario) {
-        this.precioUnitario = precioUnitario;
+    if (precioUnitario <= 0) {
+        throw new IllegalArgumentException("El precio unitario debe ser mayor a 0");
     }
+    this.precioUnitario = precioUnitario;
+}
 
     public double getSubtotal() {
         return subtotal;
