@@ -33,9 +33,12 @@ public class Factura {
     }
 
     public void agregarDetalle(DetalleFactura detalle) {
-        detalles.add(detalle);
-        calcularTotal();
+    if (detalle == null) {
+        throw new IllegalArgumentException("El detalle no puede ser nulo");
     }
+    detalles.add(detalle);
+    calcularTotal();
+}
 
     public void agregarDetalle(Producto producto, int cantidad) {
         agregarDetalle(new DetalleFactura(producto, cantidad));
@@ -61,7 +64,7 @@ public class Factura {
         texto += d.getCantidad() + " x " + d.getProducto().getNombre() + " = $" + String.format("%,.2f", d.getSubtotal()) + "\n";
     }
     texto += "-------------------------------\n";
-    texto += "TOTAL: $" + String.format("%,.2f", total) + "\n";
+    texto += "TOTAL: $" + String.format("%,.2f", getTotal()) + "\n";
     texto += "===============================";
     return texto;
 }
@@ -82,7 +85,7 @@ public class Factura {
     }
 
     public double getTotal() {
-        return total;
+    return calcularTotal();
     }
 
     public Cliente getCliente() {
@@ -90,16 +93,22 @@ public class Factura {
     }
 
     public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
+    if (cliente == null) {
+        throw new IllegalArgumentException("La factura debe tener un cliente");
     }
+    this.cliente = cliente;
+}
 
     public Vendedor getVendedor() {
         return vendedor;
     }
 
     public void setVendedor(Vendedor vendedor) {
-        this.vendedor = vendedor;
+    if (vendedor == null) {
+        throw new IllegalArgumentException("La factura debe tener un vendedor");
     }
+    this.vendedor = vendedor;
+}
 
     public List<DetalleFactura> getDetalles() {
         return detalles;
