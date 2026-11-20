@@ -8,17 +8,12 @@ package com.poo.gamestock.modelo;
  *
  * LAURA ARIZA
  */
-
-
 public abstract class Videojuego extends Producto {
 
     private String genero;
     private String clasificacionEdad;
 
-    public Videojuego() {
-        super();
-    }
-
+    // Constructor con todos los datos
     public Videojuego(String codigo, String nombre, double precio,
             int stock, String plataforma, String genero,
             String clasificacionEdad) {
@@ -29,6 +24,7 @@ public abstract class Videojuego extends Producto {
         setClasificacionEdad(clasificacionEdad);
     }
 
+    // Cada hija dice si es fisico o digital
     public abstract String getFormato();
 
     @Override

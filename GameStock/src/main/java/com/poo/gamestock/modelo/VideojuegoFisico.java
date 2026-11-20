@@ -4,29 +4,21 @@
  */
 package com.poo.gamestock.modelo;
 
+public class VideojuegoFisico extends Videojuego implements Enviable {
 
-
-public class VideojuegoFisico extends Videojuego {
     private String edicion;
 
-    public VideojuegoFisico() {
-        super();
-    }
-
+    // Constructor con todos los datos
     public VideojuegoFisico(String codigo, String nombre, double precio, int stock, String plataforma,
                             String genero, String clasificacionEdad, String edicion) {
         super(codigo, nombre, precio, stock, plataforma, genero, clasificacionEdad);
-
-        if (edicion == null || (!edicion.equalsIgnoreCase("Estandar") && !edicion.equalsIgnoreCase("Coleccionista"))) {
-            throw new IllegalArgumentException("La edicion solo admite los valores 'Estandar' o 'Coleccionista'.");
-        }
-
-        this.edicion = edicion;
+        setEdicion(edicion);
     }
 
+    // La edicion coleccionista cuesta 15% mas
     @Override
     public double calcularPrecioFinal() {
-        if (edicion != null && edicion.equalsIgnoreCase("Coleccionista")) {
+        if (edicion.equalsIgnoreCase("Coleccionista")) {
             return this.precio * 1.15;
         }
         return this.precio;
@@ -37,10 +29,17 @@ public class VideojuegoFisico extends Videojuego {
         return "Fisico";
     }
 
+    // Metodo de Enviable: lo que pesa un juego fisico
+    @Override
+    public double getPesoKg() {
+        return 0.2;
+    }
+
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
-        System.out.println("Edicion: " + edicion);
+        System.out.println("Edicion: " + edicion
+                + " | Costo de envio: $" + String.format("%,.2f", calcularCostoEnvio()));
     }
 
     public String getEdicion() {
@@ -48,6 +47,9 @@ public class VideojuegoFisico extends Videojuego {
     }
 
     public void setEdicion(String edicion) {
+        if (edicion == null || (!edicion.equalsIgnoreCase("Estandar") && !edicion.equalsIgnoreCase("Coleccionista"))) {
+            throw new IllegalArgumentException("La edicion solo admite los valores 'Estandar' o 'Coleccionista'.");
+        }
         this.edicion = edicion;
     }
 }

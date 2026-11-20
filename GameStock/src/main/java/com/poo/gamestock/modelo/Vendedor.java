@@ -4,20 +4,13 @@
  */
 package com.poo.gamestock.modelo;
 
-
-
-
-
 import java.time.LocalDate;
 
 public class Vendedor extends Persona {
 
     private int idEmpleado;
 
-    public Vendedor() {
-        super();
-    }
-
+    // Constructor con todos los datos
     public Vendedor(int idEmpleado, String nombre) {
         super(nombre);
         setIdEmpleado(idEmpleado);
@@ -46,14 +39,8 @@ public class Vendedor extends Persona {
         System.out.println(
                 "Venta procesada por el vendedor: " + getNombre());
 
-        // Uso del constructor por defecto
-        Factura factura = new Factura();
-
-        factura.setNumeroFactura(numeroFactura);
-        factura.setFecha(LocalDate.now());
-        factura.setCliente(cliente);
-        factura.setVendedor(this);
-
-        return factura;
+        // Se crea la factura con el constructor completo
+        // el vendedor es this porque es quien esta haciendo la venta
+        return new Factura(numeroFactura, LocalDate.now(), cliente, this);
     }
 }

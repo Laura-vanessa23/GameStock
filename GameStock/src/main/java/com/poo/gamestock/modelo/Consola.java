@@ -5,15 +5,12 @@
 
 package com.poo.gamestock.modelo;
 
-public class Consola extends Producto {
+public class Consola extends Producto implements Enviable, Garantizable {
 
     private String modelo;
     private String almacenamiento;
 
-    public Consola() {
-        super();
-    }
-
+    // Constructor con todos los datos
     public Consola(String codigo, String nombre, double precio,
                    int stock, String plataforma,
                    String modelo, String almacenamiento) {
@@ -23,39 +20,37 @@ public class Consola extends Producto {
         setAlmacenamiento(almacenamiento);
     }
 
+    // La consola se vende al precio normal
     @Override
     public double calcularPrecioFinal() {
         return precio;
     }
 
-    public double calcularPrecioFinal(double descuentoPorcentaje) {
-
-        if (!Double.isFinite(descuentoPorcentaje)
-                || descuentoPorcentaje < 0
-                || descuentoPorcentaje > 100) {
-            throw new IllegalArgumentException(
-                    "Descuento no valido.");
-        }
-
-        return precio * (1 - descuentoPorcentaje / 100);
+    // Metodo de Enviable: lo que pesa una consola
+    @Override
+    public double getPesoKg() {
+        return 4.5;
     }
 
-    public double calcularPrecioFinal(
-            double descuentoPorcentaje, double costoEnvio) {
+    // Cambio el calculo por defecto porque la consola es fragil
+    // le sumo un valor extra al envio normal
+    @Override
+    public double calcularCostoEnvio() {
+        return Enviable.super.calcularCostoEnvio() + 15000;
+    }
 
-        if (!Double.isFinite(costoEnvio) || costoEnvio < 0) {
-            throw new IllegalArgumentException(
-                    "El envio no puede ser negativo.");
-        }
-
-        return calcularPrecioFinal(descuentoPorcentaje) + costoEnvio;
+    // Metodo de Garantizable: meses de garantia de la consola
+    @Override
+    public int getMesesGarantia() {
+        return 12;
     }
 
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
         System.out.println("Modelo: " + modelo
-                + " | Almacenamiento: " + almacenamiento);
+                + " | Almacenamiento: " + almacenamiento
+                + " | " + describirGarantia());
     }
 
     public boolean verificarCompatibilidad() {
