@@ -31,7 +31,7 @@ public class Inventario {
         
         productos.add(p);
         this.fechaUltimaActualizacion = new Date();
-        System.out.println("Producto agregado al inventario con éxito.");
+        System.out.println("Producto agregado al inventario con exito.");
     }
 
     // Eliminar producto con validación de existencia
@@ -40,14 +40,16 @@ public class Inventario {
         if (p != null) {
             productos.remove(p);
             this.fechaUltimaActualizacion = new Date();
-            System.out.println("Producto con código " + codigo + " eliminado del inventario.");
+            System.out.println("Producto con codigo " + codigo + " eliminado del inventario.");
         } else {
             System.out.println("Aviso: No se puede eliminar. El producto con código " + codigo + " no se encuentra registrado.");
         }
     }
 
+    //Buscar producto
     public Producto buscarProducto(String codigo) {
         for (Producto p : productos) {
+            //equalsIgnoreCase sirve para validar sin distincion de Mayusculas
             if (p.getCodigo().equalsIgnoreCase(codigo)) {
                 return p;
             }
