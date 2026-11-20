@@ -1,5 +1,5 @@
-
 package com.poo.gamestock.controlador;
+
 import com.poo.gamestock.modelo.VideojuegoFisico;
 import com.poo.gamestock.modelo.VideojuegoDigital;
 import com.poo.gamestock.modelo.Cliente;
@@ -18,13 +18,17 @@ import java.util.List;
  * @author Jesús Gudiño
  */
 public class Controlador {
-     private Vista vista;
+
+    private Vista vista;
     private Inventario inventario;
     private List<Cliente> clientes;
     private List<Vendedor> vendedores;
     private List<Factura> facturas;
 
     public Controlador(Vista vista) {
+        if (vista == null) {
+            throw new IllegalArgumentException("La vista no puede ser nula.");
+        }
         this.vista = vista;
         this.inventario = new Inventario();
         this.clientes = new ArrayList<>();
@@ -59,8 +63,7 @@ public class Controlador {
         } while (opcion != 0);
     }
 
-    
-        //---1. Listar productos---
+    // --- 1. Listar productos ---
     private void listarProductos() {
         if (inventario.listarProductos().isEmpty()) {
             vista.mostrarMensaje("El inventario esta vacio");
@@ -71,46 +74,40 @@ public class Controlador {
             vista.mostrarMensaje("");
         }
     }
-    
-    // ---2. Agregar Videojuego---
-   
-private void agregarVideojuego() {
 
-    String codigo = vista.leerTexto("Codigo");
-    String nombre = vista.leerTexto("Nombre");
-    double precio = vista.leerDecimal("Precio");
-    int stock = vista.leerEntero("Stock");
-    String plataforma = vista.leerTexto("Plataforma");
-    String genero = vista.leerTexto("Genero");
-    String formato = vista.leerTexto("Formato (Fisico o Digital)");
-    String clasificacion = vista.leerTexto("Clasificacion de edad");
+    // --- 2. Agregar Videojuego ---
+    private void agregarVideojuego() {
+        String codigo = vista.leerTexto("Codigo");
+        String nombre = vista.leerTexto("Nombre");
+        double precio = vista.leerDecimal("Precio");
+        int stock = vista.leerEntero("Stock");
+        String plataforma = vista.leerTexto("Plataforma");
+        String genero = vista.leerTexto("Genero");
+        String clasificacion = vista.leerTexto("Clasificacion de edad");
+        String formato = vista.leerTexto("Formato (Fisico o Digital)");
 
-    Videojuego juego;
+        Videojuego juego;
 
-    if (formato.equalsIgnoreCase("Fisico")
-            || formato.equalsIgnoreCase("Físico")) {
+        if (formato.equalsIgnoreCase("Fisico")) {
+            String edicion = vista.leerTexto("Edicion (Estandar o Coleccionista)");
+            juego = new VideojuegoFisico(
+                    codigo, nombre, precio, stock,
+                    plataforma, genero, clasificacion, edicion);
+        } else if (formato.equalsIgnoreCase("Digital")) {
+            double tamanio = vista.leerDecimal("Tamanio de la descarga en GB");
+            juego = new VideojuegoDigital(
+                    codigo, nombre, precio, stock,
+                    plataforma, genero, clasificacion, tamanio);
+        } else {
+            throw new IllegalArgumentException(
+                    "El formato debe ser Fisico o Digital.");
+        }
 
-        juego = new VideojuegoFisico(
-                codigo, nombre, precio, stock,
-                plataforma, genero, clasificacion);
-
-    } else if (formato.equalsIgnoreCase("Digital")) {
-
-        juego = new VideojuegoDigital(
-                codigo, nombre, precio, stock,
-                plataforma, genero, clasificacion);
-
-    } else {
-        throw new IllegalArgumentException(
-                "El formato debe ser Fisico o Digital.");
+        inventario.agregarProducto(juego);
     }
 
-    inventario.agregarProducto(juego);
-}
-
-     
-     //3.---Agregar consola---
-     private void agregarConsola() {
+    // --- 3. Agregar consola ---
+    private void agregarConsola() {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
         double precio = vista.leerDecimal("Precio");
@@ -123,9 +120,9 @@ private void agregarVideojuego() {
                 modelo, almacenamiento);
         inventario.agregarProducto(consola);
     }
-     
-     //4.---Buscar Producto---
-     private void buscarProducto() {
+
+    // --- 4. Buscar Producto ---
+    private void buscarProducto() {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
         if (producto == null) {
@@ -135,15 +132,15 @@ private void agregarVideojuego() {
         producto.mostrarInfo();
         vista.mostrarMensaje("Precio final: $" + (long) producto.calcularPrecioFinal());
     }
-     
-     //---5.Eliminar Producto---
-     private void eliminarProducto() {
+
+    // --- 5. Eliminar Producto ---
+    private void eliminarProducto() {
         String codigo = vista.leerTexto("Codigo del producto a eliminar");
         inventario.eliminarProducto(codigo);
     }
-    
-     //---6.Actualizar Stock
-     private void actualizarStock() {
+
+    // --- 6. Actualizar Stock ---
+    private void actualizarStock() {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
         if (producto == null) {
@@ -153,11 +150,8 @@ private void agregarVideojuego() {
         int nuevoStock = vista.leerEntero("Nuevo stock (actual: " + producto.getStock() + ")");
         inventario.actualizarStock(codigo, nuevoStock);
     }
-     
-     
-     
-     
-    //---7.Registrar Cliente---
+
+    // --- 7. Registrar Cliente ---
     private void registrarCliente() {
         String nombre = vista.leerTexto("Nombre");
         String documento = vista.leerTexto("Documento");
@@ -171,8 +165,8 @@ private void agregarVideojuego() {
         clientes.add(cliente);
         cliente.registrarCliente();
     }
-    
-    //---8.Registrar Venta---
+
+    // --- 8. Registrar Venta ---
     private void registrarVenta() {
         Vendedor vendedor = buscarVendedor(vista.leerEntero("Codigo del vendedor"));
         if (vendedor == null) {
@@ -210,8 +204,8 @@ private void agregarVideojuego() {
         guardarFactura(factura);
         vista.mostrarMensaje(factura.generarComprobante());
     }
-    
-    //---9.Ver Facturas
+
+    // --- 9. Ver Facturas ---
     private void verFacturas() {
         if (facturas.isEmpty()) {
             vista.mostrarMensaje("Todavia no hay facturas");
@@ -222,8 +216,8 @@ private void agregarVideojuego() {
             vista.mostrarMensaje("");
         }
     }
-    
-    //---10.Historial del Cliente---
+
+    // --- 10. Historial del Cliente ---
     private void historialCliente() {
         Cliente cliente = buscarCliente(vista.leerTexto("Documento del cliente"));
         if (cliente == null) {
@@ -270,12 +264,13 @@ private void agregarVideojuego() {
 
     private void cargarDatos() {
         inventario.agregarProducto(new VideojuegoFisico(
-        "VJ001", "God of War Ragnarok", 219000, 10,
-        "PlayStation 5", "Accion", "M"));
+                "VJ001", "God of War Ragnarok", 219000, 10,
+                "PlayStation 5", "Accion", "M", "Estandar"));
 
-inventario.agregarProducto(new VideojuegoDigital(
-        "VJ002", "Forza Horizon 6", 279900, 8,
-        "Xbox Series X|S", "Carreras", "E"));
+        inventario.agregarProducto(new VideojuegoDigital(
+                "VJ002", "Forza Horizon 6", 279900, 8,
+                "Xbox Series X|S", "Carreras", "E", 120.5));
+
         inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
         inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 
@@ -303,5 +298,4 @@ inventario.agregarProducto(new VideojuegoDigital(
         agregarLinea(f3, inventario.buscarProducto("VJ002"), 2);
         guardarFactura(f3);
     }
-    
 }

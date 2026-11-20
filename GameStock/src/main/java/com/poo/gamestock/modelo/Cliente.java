@@ -15,7 +15,7 @@ public class Cliente {
     private String documento;
     private String correo;
     private String telefono;
-    private List<Factura> historialCompras; // Dependencia con Factura
+    private List<Factura> historialCompras; 
 
     // Constructor por defecto
     public Cliente() {

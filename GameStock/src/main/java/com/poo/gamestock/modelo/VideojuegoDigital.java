@@ -11,23 +11,48 @@ package com.poo.gamestock.modelo;
 
 
 public class VideojuegoDigital extends Videojuego {
+    private double tamanioGB;
 
-    // Constructor por defecto
     public VideojuegoDigital() {
         super();
     }
 
-    // Constructor parametrizado
-    public VideojuegoDigital(String codigo, String nombre,
-            double precio, int stock, String plataforma,
-            String genero, String clasificacionEdad) {
+    public VideojuegoDigital(String codigo, String nombre, double precio, int stock, String plataforma,
+                             String genero, String clasificacionEdad, double tamanioGB) {
+        super(codigo, nombre, precio, stock, plataforma, genero, clasificacionEdad);
 
-        super(codigo, nombre, precio, stock, plataforma,
-                genero, "Digital", clasificacionEdad);
+        if (tamanioGB <= 0) {
+            throw new IllegalArgumentException("El tamanio de la descarga debe ser mayor a 0.");
+        }
+
+        this.tamanioGB = tamanioGB;
     }
 
     @Override
     public double calcularPrecioFinal() {
-        return super.calcularPrecioFinal();
+        return this.precio * 0.90;
+    }
+
+    @Override
+    public String getFormato() {
+        return "Digital";
+    }
+
+    @Override
+    public void mostrarInfo() {
+        super.mostrarInfo();
+        System.out.println("Tamanio de descarga: " + tamanioGB + " GB");
+    }
+
+    public boolean verificarDisponibilidadDigital() {
+        return this.stock > 0;
+    }
+
+    public double getTamanioGB() {
+        return tamanioGB;
+    }
+
+    public void setTamanioGB(double tamanioGB) {
+        this.tamanioGB = tamanioGB;
     }
 }

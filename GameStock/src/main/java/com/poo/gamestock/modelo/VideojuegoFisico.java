@@ -4,30 +4,50 @@
  */
 package com.poo.gamestock.modelo;
 
-/**
- *
- * @author PC
- */
 
 
 public class VideojuegoFisico extends Videojuego {
+    private String edicion;
 
-    // Constructor por defecto
     public VideojuegoFisico() {
         super();
     }
 
-    // Constructor parametrizado
-    public VideojuegoFisico(String codigo, String nombre,
-            double precio, int stock, String plataforma,
-            String genero, String clasificacionEdad) {
+    public VideojuegoFisico(String codigo, String nombre, double precio, int stock, String plataforma,
+                            String genero, String clasificacionEdad, String edicion) {
+        super(codigo, nombre, precio, stock, plataforma, genero, clasificacionEdad);
 
-        super(codigo, nombre, precio, stock, plataforma,
-                genero, "Fisico", clasificacionEdad);
+        if (edicion == null || (!edicion.equalsIgnoreCase("Estandar") && !edicion.equalsIgnoreCase("Coleccionista"))) {
+            throw new IllegalArgumentException("La edicion solo admite los valores 'Estandar' o 'Coleccionista'.");
+        }
+
+        this.edicion = edicion;
     }
 
     @Override
     public double calcularPrecioFinal() {
-        return super.calcularPrecioFinal();
+        if (edicion != null && edicion.equalsIgnoreCase("Coleccionista")) {
+            return this.precio * 1.15;
+        }
+        return this.precio;
+    }
+
+    @Override
+    public String getFormato() {
+        return "Fisico";
+    }
+
+    @Override
+    public void mostrarInfo() {
+        super.mostrarInfo();
+        System.out.println("Edicion: " + edicion);
+    }
+
+    public String getEdicion() {
+        return edicion;
+    }
+
+    public void setEdicion(String edicion) {
+        this.edicion = edicion;
     }
 }

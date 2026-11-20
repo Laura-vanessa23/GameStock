@@ -9,55 +9,36 @@ package com.poo.gamestock.modelo;
  * LAURA ARIZA
  */
 
-public class Videojuego extends Producto {
+
+public abstract class Videojuego extends Producto {
 
     private String genero;
-    private String formato;
     private String clasificacionEdad;
 
-    // Constructor por defecto
     public Videojuego() {
         super();
     }
 
-    // Constructor parametrizado
     public Videojuego(String codigo, String nombre, double precio,
             int stock, String plataforma, String genero,
-            String formato, String clasificacionEdad) {
+            String clasificacionEdad) {
 
         super(codigo, nombre, precio, stock, plataforma);
 
         setGenero(genero);
-        setFormato(formato);
         setClasificacionEdad(clasificacionEdad);
     }
 
-    @Override
-    public double calcularPrecioFinal() {
-
-        if (formato != null && formato.equalsIgnoreCase("Digital")) {
-            return precio * 0.90;
-        }
-
-        return precio;
-    }
+    public abstract String getFormato();
 
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
 
         System.out.println("Genero: " + genero
-                + " | Formato: " + formato
+                + " | Formato: " + getFormato()
                 + " | Clasificacion: " + clasificacionEdad);
     }
-
-    public boolean verificarDisponibilidadDigital() {
-        return formato != null
-                && formato.equalsIgnoreCase("Digital")
-                && stock > 0;
-    }
-
-    // Getters y setters
 
     public String getGenero() {
         return genero;
@@ -69,25 +50,6 @@ public class Videojuego extends Producto {
                     "El genero no puede estar vacio.");
         }
         this.genero = genero;
-    }
-
-    public String getFormato() {
-        return formato;
-    }
-
-    public void setFormato(String formato) {
-
-        if (formato == null
-                || (!formato.equalsIgnoreCase("Fisico")
-                && !formato.equalsIgnoreCase("Físico")
-                && !formato.equalsIgnoreCase("Digital"))) {
-
-            throw new IllegalArgumentException(
-                    "El formato debe ser Fisico o Digital.");
-        }
-
-        this.formato = formato.equalsIgnoreCase("Digital")
-                ? "Digital" : "Fisico";
     }
 
     public String getClasificacionEdad() {
