@@ -1,33 +1,20 @@
 
 package com.poo.gamestock.modelo;
 
-/**
- *
- * @author Jesús Gudiño
- */
 public class DetalleFactura {
-    
-    
-    
 
     private int cantidad;
     private double precioUnitario;
     private double subtotal;
     private Producto producto;
 
-    public DetalleFactura() {
-    }
-
     public DetalleFactura(Producto producto, int cantidad) {
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo");
+
+        if (producto == null || cantidad <= 0
+                || cantidad > producto.getStock()) {
+            throw new IllegalArgumentException("Detalle invalido.");
         }
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
-        }
-        if (cantidad > producto.getStock()) {
-            throw new IllegalArgumentException("La cantidad supera el stock disponible");
-        }
+
         this.producto = producto;
         this.cantidad = cantidad;
         this.precioUnitario = producto.calcularPrecioFinal();
@@ -43,26 +30,9 @@ public class DetalleFactura {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
-    if (cantidad <= 0) {
-        throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
-    }
-    if (producto != null && cantidad > producto.getStock()) {
-        throw new IllegalArgumentException("La cantidad supera el stock disponible");
-    }
-    this.cantidad = cantidad;
-}
-
     public double getPrecioUnitario() {
         return precioUnitario;
     }
-
-    public void setPrecioUnitario(double precioUnitario) {
-    if (precioUnitario <= 0) {
-        throw new IllegalArgumentException("El precio unitario debe ser mayor a 0");
-    }
-    this.precioUnitario = precioUnitario;
-}
 
     public double getSubtotal() {
         return subtotal;
@@ -71,9 +41,4 @@ public class DetalleFactura {
     public Producto getProducto() {
         return producto;
     }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-    
 }

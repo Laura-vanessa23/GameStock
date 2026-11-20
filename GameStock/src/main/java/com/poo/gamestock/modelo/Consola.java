@@ -10,13 +10,9 @@ public class Consola extends Producto {
     private String modelo;
     private String almacenamiento;
 
-    public Consola() {
-        super();
-    }
-
     public Consola(String codigo, String nombre, double precio,
-                   int stock, String plataforma,
-                   String modelo, String almacenamiento) {
+                   int stock, String plataforma, String modelo,
+                   String almacenamiento) {
 
         super(codigo, nombre, precio, stock, plataforma);
         setModelo(modelo);
@@ -28,24 +24,22 @@ public class Consola extends Producto {
         return precio;
     }
 
+    // Sobrecarga 1
     public double calcularPrecioFinal(double descuentoPorcentaje) {
 
-        if (!Double.isFinite(descuentoPorcentaje)
-                || descuentoPorcentaje < 0
-                || descuentoPorcentaje > 100) {
-            throw new IllegalArgumentException(
-                    "Descuento no valido.");
+        if (descuentoPorcentaje < 0 || descuentoPorcentaje > 100) {
+            throw new IllegalArgumentException("Descuento invalido.");
         }
 
         return precio * (1 - descuentoPorcentaje / 100);
     }
 
-    public double calcularPrecioFinal(
-            double descuentoPorcentaje, double costoEnvio) {
+    // Sobrecarga 2
+    public double calcularPrecioFinal(double descuentoPorcentaje,
+                                      double costoEnvio) {
 
-        if (!Double.isFinite(costoEnvio) || costoEnvio < 0) {
-            throw new IllegalArgumentException(
-                    "El envio no puede ser negativo.");
+        if (costoEnvio < 0) {
+            throw new IllegalArgumentException("Envio invalido.");
         }
 
         return calcularPrecioFinal(descuentoPorcentaje) + costoEnvio;
@@ -59,8 +53,7 @@ public class Consola extends Producto {
     }
 
     public boolean verificarCompatibilidad() {
-        return almacenamiento != null
-                && !almacenamiento.isEmpty();
+        return almacenamiento != null && !almacenamiento.isEmpty();
     }
 
     public String getModelo() {
@@ -69,10 +62,9 @@ public class Consola extends Producto {
 
     public void setModelo(String modelo) {
         if (modelo == null || modelo.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El modelo no puede estar vacio.");
+            throw new IllegalArgumentException("Modelo invalido.");
         }
-        this.modelo = modelo.trim();
+        this.modelo = modelo;
     }
 
     public String getAlmacenamiento() {
@@ -80,11 +72,9 @@ public class Consola extends Producto {
     }
 
     public void setAlmacenamiento(String almacenamiento) {
-        if (almacenamiento == null
-                || almacenamiento.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El almacenamiento no puede estar vacio.");
+        if (almacenamiento == null || almacenamiento.trim().isEmpty()) {
+            throw new IllegalArgumentException("Almacenamiento invalido.");
         }
-        this.almacenamiento = almacenamiento.trim();
+        this.almacenamiento = almacenamiento;
     }
 }

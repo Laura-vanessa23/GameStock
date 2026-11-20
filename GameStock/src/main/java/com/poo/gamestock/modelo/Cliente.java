@@ -7,8 +7,6 @@ package com.poo.gamestock.modelo;
 
 
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +17,6 @@ public class Cliente extends Persona {
     private String correo;
     private String telefono;
     private List<Factura> historialCompras;
-
-    public Cliente() {
-        super();
-        historialCompras = new ArrayList<>();
-    }
 
     public Cliente(int id, String nombre, String documento,
                    String correo, String telefono) {
@@ -42,8 +35,7 @@ public class Cliente extends Persona {
 
     public void setId(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException(
-                    "El ID debe ser mayor a cero.");
+            throw new IllegalArgumentException("ID invalido.");
         }
         this.id = id;
     }
@@ -54,8 +46,7 @@ public class Cliente extends Persona {
 
     public void setDocumento(String documento) {
         if (documento == null || documento.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El documento no puede estar vacio.");
+            throw new IllegalArgumentException("Documento invalido.");
         }
         this.documento = documento.trim();
     }
@@ -66,9 +57,8 @@ public class Cliente extends Persona {
 
     public void setCorreo(String correo) {
         if (correo == null ||
-                !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            throw new IllegalArgumentException(
-                    "El correo no es valido.");
+            !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("Correo invalido.");
         }
         this.correo = correo.trim();
     }
@@ -79,15 +69,13 @@ public class Cliente extends Persona {
 
     public void setTelefono(String telefono) {
         if (telefono == null || telefono.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El telefono no puede estar vacio.");
+            throw new IllegalArgumentException("Telefono invalido.");
         }
         this.telefono = telefono.trim();
     }
 
     public void registrarCliente() {
-        System.out.println(
-                "Cliente registrado correctamente: " + getNombre());
+        System.out.println("Cliente registrado: " + getNombre());
     }
 
     public List<Factura> consultarHistorialCompras() {
@@ -96,12 +84,7 @@ public class Cliente extends Persona {
 
     // Asociacion con Factura
     public void agregarFacturaAlHistorial(Factura factura) {
-        if (factura == null) {
-            throw new IllegalArgumentException(
-                    "La factura no puede ser nula.");
-        }
-
-        if (!historialCompras.contains(factura)) {
+        if (factura != null && !historialCompras.contains(factura)) {
             historialCompras.add(factura);
         }
     }

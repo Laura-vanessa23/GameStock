@@ -4,33 +4,23 @@
  */
 package com.poo.gamestock.modelo;
 
-/**
- *
- * @author PC
- */
-
-
 public class VideojuegoDigital extends Videojuego {
+
     private double tamanioGB;
 
-    public VideojuegoDigital() {
-        super();
-    }
+    public VideojuegoDigital(String codigo, String nombre, double precio,
+                             int stock, String plataforma, String genero,
+                             String clasificacionEdad, double tamanioGB) {
 
-    public VideojuegoDigital(String codigo, String nombre, double precio, int stock, String plataforma,
-                             String genero, String clasificacionEdad, double tamanioGB) {
-        super(codigo, nombre, precio, stock, plataforma, genero, clasificacionEdad);
+        super(codigo, nombre, precio, stock, plataforma,
+                genero, clasificacionEdad);
 
-        if (tamanioGB <= 0) {
-            throw new IllegalArgumentException("El tamanio de la descarga debe ser mayor a 0.");
-        }
-
-        this.tamanioGB = tamanioGB;
+        setTamanioGB(tamanioGB);
     }
 
     @Override
     public double calcularPrecioFinal() {
-        return this.precio * 0.90;
+        return precio * 0.90;
     }
 
     @Override
@@ -45,7 +35,7 @@ public class VideojuegoDigital extends Videojuego {
     }
 
     public boolean verificarDisponibilidadDigital() {
-        return this.stock > 0;
+        return stock > 0;
     }
 
     public double getTamanioGB() {
@@ -53,6 +43,9 @@ public class VideojuegoDigital extends Videojuego {
     }
 
     public void setTamanioGB(double tamanioGB) {
+        if (tamanioGB <= 0) {
+            throw new IllegalArgumentException("Tamanio invalido.");
+        }
         this.tamanioGB = tamanioGB;
     }
 }

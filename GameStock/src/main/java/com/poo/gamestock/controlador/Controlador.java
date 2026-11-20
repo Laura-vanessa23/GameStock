@@ -76,20 +76,25 @@ public class Controlador {
         p.mostrarInfo();
 
         vista.mostrarMensaje(
-                "Precio final: $"
-                + String.format("%,.2f", p.calcularPrecioFinal()));
+                "Precio final: $" + p.calcularPrecioFinal());
 
         if (p instanceof Consola) {
 
             Consola consola = (Consola) p;
 
+            double descuento = vista.leerDecimal(
+                    "Ingrese descuento para la consola (%)");
+
             vista.mostrarMensaje(
                     "Precio con descuento: $"
-                    + consola.calcularPrecioFinal(0));
+                    + consola.calcularPrecioFinal(descuento));
+
+            double envio = vista.leerDecimal(
+                    "Ingrese costo de envio");
 
             vista.mostrarMensaje(
                     "Precio con descuento y envio: $"
-                    + consola.calcularPrecioFinal(0, 0));
+                    + consola.calcularPrecioFinal(descuento, envio));
         }
 
         vista.mostrarMensaje("");
