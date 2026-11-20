@@ -1,6 +1,7 @@
 
 package com.poo.gamestock.controlador;
-
+import com.poo.gamestock.modelo.VideojuegoFisico;
+import com.poo.gamestock.modelo.VideojuegoDigital;
 import com.poo.gamestock.modelo.Cliente;
 import com.poo.gamestock.modelo.Consola;
 import com.poo.gamestock.modelo.Factura;
@@ -72,20 +73,41 @@ public class Controlador {
     }
     
     // ---2. Agregar Videojuego---
-     private void agregarVideojuego() {
-        String codigo = vista.leerTexto("Codigo");
-        String nombre = vista.leerTexto("Nombre");
-        double precio = vista.leerDecimal("Precio");
-        int stock = vista.leerEntero("Stock");
-        String plataforma = vista.leerTexto("Plataforma");
-        String genero = vista.leerTexto("Genero");
-        String formato = vista.leerTexto("Formato (Fisico o Digital)");
-        String clasificacion = vista.leerTexto("Clasificacion de edad");
+   
+private void agregarVideojuego() {
 
-        Videojuego juego = new Videojuego(codigo, nombre, precio, stock, plataforma,
-                genero, formato, clasificacion);
-        inventario.agregarProducto(juego);
+    String codigo = vista.leerTexto("Codigo");
+    String nombre = vista.leerTexto("Nombre");
+    double precio = vista.leerDecimal("Precio");
+    int stock = vista.leerEntero("Stock");
+    String plataforma = vista.leerTexto("Plataforma");
+    String genero = vista.leerTexto("Genero");
+    String formato = vista.leerTexto("Formato (Fisico o Digital)");
+    String clasificacion = vista.leerTexto("Clasificacion de edad");
+
+    Videojuego juego;
+
+    if (formato.equalsIgnoreCase("Fisico")
+            || formato.equalsIgnoreCase("Físico")) {
+
+        juego = new VideojuegoFisico(
+                codigo, nombre, precio, stock,
+                plataforma, genero, clasificacion);
+
+    } else if (formato.equalsIgnoreCase("Digital")) {
+
+        juego = new VideojuegoDigital(
+                codigo, nombre, precio, stock,
+                plataforma, genero, clasificacion);
+
+    } else {
+        throw new IllegalArgumentException(
+                "El formato debe ser Fisico o Digital.");
     }
+
+    inventario.agregarProducto(juego);
+}
+
      
      //3.---Agregar consola---
      private void agregarConsola() {
@@ -247,8 +269,13 @@ public class Controlador {
     }
 
     private void cargarDatos() {
-        inventario.agregarProducto(new Videojuego("VJ001", "God of War Ragnarok", 219000, 10, "PlayStation 5", "Accion", "Fisico", "M"));
-        inventario.agregarProducto(new Videojuego("VJ002", "Forza Horizon 6", 279900, 8, "Xbox Series X|S", "Carreras", "Digital", "E"));
+        inventario.agregarProducto(new VideojuegoFisico(
+        "VJ001", "God of War Ragnarok", 219000, 10,
+        "PlayStation 5", "Accion", "M"));
+
+inventario.agregarProducto(new VideojuegoDigital(
+        "VJ002", "Forza Horizon 6", 279900, 8,
+        "Xbox Series X|S", "Carreras", "E"));
         inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
         inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 

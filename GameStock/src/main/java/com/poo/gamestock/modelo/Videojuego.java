@@ -8,9 +8,11 @@ package com.poo.gamestock.modelo;
  *
  * LAURA ARIZA
  */
+
 public class Videojuego extends Producto {
+
     private String genero;
-    private String formato; // "Físico" o "Digital"
+    private String formato;
     private String clasificacionEdad;
 
     // Constructor por defecto
@@ -18,51 +20,54 @@ public class Videojuego extends Producto {
         super();
     }
 
-    // Constructor con validaciones directas
-    public Videojuego(String codigo, String nombre, double precio, int stock, String plataforma, 
-                      String genero, String formato, String clasificacionEdad) {
-        super(codigo, nombre, precio, stock, plataforma); // Valida los atributos heredados de Producto
+    // Constructor parametrizado
+    public Videojuego(String codigo, String nombre, double precio,
+            int stock, String plataforma, String genero,
+            String formato, String clasificacionEdad) {
 
-        // Validaciones directas en el constructor
-        if (genero == null || genero.trim().isEmpty()) {
-            throw new IllegalArgumentException("El género del videojuego no puede estar vacio.");
-        }
-        if (formato == null || (!formato.equalsIgnoreCase("Fisico") && !formato.equalsIgnoreCase("Digital"))) {
-            throw new IllegalArgumentException("El formato sólo admite los valores 'Fisico' o 'Digital'.");
-        }
-        if (clasificacionEdad == null || clasificacionEdad.trim().isEmpty()) {
-            throw new IllegalArgumentException("La clasificacion de edad no puede estar vacia.");
-        }
+        super(codigo, nombre, precio, stock, plataforma);
 
-        this.genero = genero;
-        this.formato = formato;
-        this.clasificacionEdad = clasificacionEdad;
+        setGenero(genero);
+        setFormato(formato);
+        setClasificacionEdad(clasificacionEdad);
     }
 
     @Override
     public double calcularPrecioFinal() {
+
         if (formato != null && formato.equalsIgnoreCase("Digital")) {
-            return this.precio * 0.90; // 10% de descuento por ser digital
+            return precio * 0.90;
         }
-        return this.precio;
+
+        return precio;
     }
 
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
-        System.out.println("Genero: " + genero + " | Formato: " + formato + " | Clasificacion: " + clasificacionEdad);
+
+        System.out.println("Genero: " + genero
+                + " | Formato: " + formato
+                + " | Clasificacion: " + clasificacionEdad);
     }
 
     public boolean verificarDisponibilidadDigital() {
-        return this.formato != null && this.formato.equalsIgnoreCase("Digital") && this.stock > 0;
+        return formato != null
+                && formato.equalsIgnoreCase("Digital")
+                && stock > 0;
     }
 
-    // Getters y Setters 
+    // Getters y setters
+
     public String getGenero() {
         return genero;
     }
 
     public void setGenero(String genero) {
+        if (genero == null || genero.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "El genero no puede estar vacio.");
+        }
         this.genero = genero;
     }
 
@@ -71,7 +76,18 @@ public class Videojuego extends Producto {
     }
 
     public void setFormato(String formato) {
-        this.formato = formato;
+
+        if (formato == null
+                || (!formato.equalsIgnoreCase("Fisico")
+                && !formato.equalsIgnoreCase("Físico")
+                && !formato.equalsIgnoreCase("Digital"))) {
+
+            throw new IllegalArgumentException(
+                    "El formato debe ser Fisico o Digital.");
+        }
+
+        this.formato = formato.equalsIgnoreCase("Digital")
+                ? "Digital" : "Fisico";
     }
 
     public String getClasificacionEdad() {
@@ -79,6 +95,11 @@ public class Videojuego extends Producto {
     }
 
     public void setClasificacionEdad(String clasificacionEdad) {
+        if (clasificacionEdad == null
+                || clasificacionEdad.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "La clasificacion no puede estar vacia.");
+        }
         this.clasificacionEdad = clasificacionEdad;
     }
 }
