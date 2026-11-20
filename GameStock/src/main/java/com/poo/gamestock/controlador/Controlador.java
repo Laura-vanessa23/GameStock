@@ -64,17 +64,37 @@ public class Controlador {
     }
 
     // --- 1. Listar productos ---
-    private void listarProductos() {
-        if (inventario.listarProductos().isEmpty()) {
-            vista.mostrarMensaje("El inventario esta vacio");
-        }
-        for (Producto p : inventario.listarProductos()) {
-            p.mostrarInfo();
-            vista.mostrarMensaje("Precio final: $" + String.format("%,.2f", p.calcularPrecioFinal()));
-            vista.mostrarMensaje("");
-        }
+   private void listarProductos() {
+
+    if (inventario.listarProductos().isEmpty()) {
+        vista.mostrarMensaje("El inventario esta vacio");
+        return;
     }
 
+    for (Producto p : inventario.listarProductos()) {
+
+        p.mostrarInfo();
+
+        vista.mostrarMensaje(
+                "Precio final: $"
+                + String.format("%,.2f", p.calcularPrecioFinal()));
+
+        if (p instanceof Consola) {
+
+            Consola consola = (Consola) p;
+
+            vista.mostrarMensaje(
+                    "Precio con descuento: $"
+                    + consola.calcularPrecioFinal(0));
+
+            vista.mostrarMensaje(
+                    "Precio con descuento y envio: $"
+                    + consola.calcularPrecioFinal(0, 0));
+        }
+
+        vista.mostrarMensaje("");
+    }
+}
     // --- 2. Agregar Videojuego ---
     private void agregarVideojuego() {
         String codigo = vista.leerTexto("Codigo");
