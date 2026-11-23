@@ -20,15 +20,7 @@ public class Factura {
         detalles = new ArrayList<>();
     }
 
-    public Factura(String numeroFactura, LocalDate fecha,
-                   Cliente cliente, Vendedor vendedor) {
-
-        setNumeroFactura(numeroFactura);
-        setFecha(fecha);
-        setCliente(cliente);
-        setVendedor(vendedor);
-        detalles = new ArrayList<>();
-    }
+ 
 
     // Sobrecarga 1
     public void agregarDetalle(DetalleFactura detalle) {

@@ -22,8 +22,7 @@ public class Vendedor extends Persona {
 
     public void setIdEmpleado(int idEmpleado) {
         if (idEmpleado <= 0) {
-            throw new IllegalArgumentException(
-                    "El codigo de empleado debe ser mayor a cero.");
+            throw new IllegalArgumentException("Codigo invalido.");
         }
         this.idEmpleado = idEmpleado;
     }
@@ -32,12 +31,10 @@ public class Vendedor extends Persona {
                                   Cliente cliente) {
 
         if (cliente == null) {
-            throw new IllegalArgumentException(
-                    "El cliente no puede ser nulo.");
+            throw new IllegalArgumentException("Cliente invalido.");
         }
 
-        System.out.println(
-                "Venta procesada por el vendedor: " + getNombre());
+        System.out.println("Venta procesada por: " + getNombre());
 
         // Se crea la factura con el constructor completo
         // el vendedor es this porque es quien esta haciendo la venta

@@ -50,7 +50,7 @@ public class Consola extends Producto implements Enviable, Garantizable {
         super.mostrarInfo();
         System.out.println("Modelo: " + modelo
                 + " | Almacenamiento: " + almacenamiento
-                + " | " + describirGarantia());
+                );
     }
 
     public boolean verificarCompatibilidad() {
