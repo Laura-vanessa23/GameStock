@@ -1,6 +1,7 @@
-
-
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.poo.gamestock.modelo;
 
 import java.time.LocalDate;
@@ -16,11 +17,16 @@ public class Factura {
     private Vendedor vendedor;
     private List<DetalleFactura> detalles;
 
-    public Factura() {
+    // Constructor con todos los datos
+    public Factura(String numeroFactura, LocalDate fecha,
+               Cliente cliente, Vendedor vendedor) {
+
+        setNumeroFactura(numeroFactura);
+        setFecha(fecha);
+        setCliente(cliente);
+        setVendedor(vendedor);
         detalles = new ArrayList<>();
     }
-
- 
 
     // Sobrecarga 1
     public void agregarDetalle(DetalleFactura detalle) {
@@ -39,14 +45,40 @@ public class Factura {
         agregarDetalle(new DetalleFactura(producto, cantidad));
     }
 
-    public double calcularTotal() {
+    // Sobrecarga 3: con descuento adicional
+    public void agregarDetalle(Producto producto, int cantidad, double descuentoPorcentaje) {
+        agregarDetalle(new DetalleFactura(producto, cantidad, descuentoPorcentaje));
+    }
 
-        total = 0;
+    // Suma solo los productos sin el envio
+    public double calcularSubtotal() {
+        double suma = 0;
 
         for (DetalleFactura detalle : detalles) {
-            total += detalle.calcularSubtotal();
+            suma += detalle.calcularSubtotal();
         }
 
+        return suma;
+    }
+
+    // Suma el envio de los productos Enviable
+    // si la compra llega al minimo el envio es gratis
+    public double calcularEnvio() {
+        double envio = 0;
+
+        for (DetalleFactura detalle : detalles) {
+            envio += detalle.calcularEnvio();
+        }
+
+        if (calcularSubtotal() >= Enviable.MINIMO_ENVIO_GRATIS) {
+            return 0;
+        }
+
+        return envio;
+    }
+
+    public double calcularTotal() {
+        total = calcularSubtotal() + calcularEnvio();
         return total;
     }
 
@@ -69,10 +101,26 @@ public class Factura {
             texto += detalle.getCantidad() + " x "
                     + detalle.getProducto().getNombre()
                     + " = $" + String.format("%,.2f",
-                            detalle.calcularSubtotal()) + "\n";
+                            detalle.calcularSubtotal());
+
+            // Si tiene descuento adicional se muestra
+            if (detalle.getDescuentoPorcentaje() > 0) {
+                texto += " (desc " + detalle.getDescuentoPorcentaje() + "%)";
+            }
+            texto += "\n";
+
+            // Si el producto tiene garantia se muestra
+            if (detalle.getProducto() instanceof Garantizable) {
+                Garantizable garantizable = (Garantizable) detalle.getProducto();
+                texto += "   " + garantizable.describirGarantia() + "\n";
+            }
         }
 
         texto += "-------------------------------\n";
+        texto += "Subtotal: $" + String.format("%,.2f",
+                calcularSubtotal()) + "\n";
+        texto += "Envio: $" + String.format("%,.2f",
+                calcularEnvio()) + "\n";
         texto += "TOTAL: $" + String.format("%,.2f",
                 calcularTotal()) + "\n";
         texto += "===============================";

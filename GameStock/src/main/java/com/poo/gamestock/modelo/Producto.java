@@ -4,38 +4,22 @@
  */
 package com.poo.gamestock.modelo;
 
-/**
- *
- * LAURA ARIZA
- */
-public abstract class Producto {
-    protected String codigo; // acceso dif aluml por herencia para las subclases
+public abstract class Producto implements Descontable {
+
+    protected String codigo;
     protected String nombre;
     protected double precio;
     protected int stock;
     protected String plataforma;
 
-    // Constructor por defecto
-    public Producto() {
-    }
+    public Producto(String codigo, String nombre, double precio,
+                    int stock, String plataforma) {
 
-    // Constructor  con validaciones directas
-    public Producto(String codigo, String nombre, double precio, int stock, String plataforma) {
-        if (codigo == null || codigo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El código del producto no puede estar vacío.");
-        }
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del producto no puede estar vacío.");
-        }
-        if (precio <= 0) {
-            throw new IllegalArgumentException("El precio debe ser mayor a 0.");
-        }
-        if (stock < 0) {
-            throw new IllegalArgumentException("El stock no puede ser negativo."); // Detiene la ejecución si se rompe la regla de negocio
-        }
-        if (plataforma == null || plataforma.trim().isEmpty()) {
-            //es una alerta 
-            throw new IllegalArgumentException("La plataforma no puede estar vacía.");   
+        if (codigo == null || codigo.trim().isEmpty()
+                || nombre == null || nombre.trim().isEmpty()
+                || precio <= 0 || stock < 0
+                || plataforma == null || plataforma.trim().isEmpty()) {
+            throw new IllegalArgumentException("Datos del producto invalidos.");
         }
 
         this.codigo = codigo;
@@ -45,49 +29,57 @@ public abstract class Producto {
         this.plataforma = plataforma;
     }
 
-    // Método abstracto 
+    // Metodo abstracto cada hija lo calcula a su manera
     public abstract double calcularPrecioFinal();
 
-   
+    // Sobrecarga 1 viene de la interfaz Descontable
+    // usa el metodo de arriba y le aplica el descuento extra
+    @Override
+    public double calcularPrecioFinal(double descuentoPorcentaje) {
+        if (!descuentoPermitido(descuentoPorcentaje)) {
+            throw new IllegalArgumentException("Descuento no valido.");
+        }
+        return calcularPrecioFinal() * (1 - descuentoPorcentaje / 100.0);
+    }
+
+    // Sobrecarga 2 descuento extra mas el costo de envio
+    public double calcularPrecioFinal(double descuentoPorcentaje,
+                                      double costoEnvio) {
+        if (costoEnvio < 0) {
+            throw new IllegalArgumentException("El envio no puede ser negativo.");
+        }
+        return calcularPrecioFinal(descuentoPorcentaje) + costoEnvio;
+    }
+
     public int consultarStock() {
-        return this.stock;
+        return stock;
     }
 
     public void actualizarStock(int cantidad) {
-        if (this.stock + cantidad < 0) {
-            throw new IllegalArgumentException("El stock no puede quedar negativo.");
+        if (stock + cantidad < 0) {
+            throw new IllegalArgumentException("Stock insuficiente.");
         }
-        this.stock += cantidad;
+        stock += cantidad;
     }
 
-    // Mostrar información
     public void mostrarInfo() {
-        System.out.println("Codigo: " + codigo + " | Nombre: " + nombre + " | Precio: $" + String.format("%,.2f", precio) + " | Stock: " + stock + " | Plataforma: " + plataforma);
-    }
+    System.out.println("Codigo: " + codigo
+            + " | Nombre: " + nombre
+            + " | Precio: $" + String.format("%,.2f", precio)
+            + " | Stock: " + stock
+            + " | Plataforma: " + plataforma);
+}
 
-    // Getters y Setters 
     public String getCodigo() {
         return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public double getPrecio() {
         return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
     }
 
     public int getStock() {
@@ -95,14 +87,13 @@ public abstract class Producto {
     }
 
     public void setStock(int stock) {
+        if (stock < 0) {
+            throw new IllegalArgumentException("Stock invalido.");
+        }
         this.stock = stock;
     }
 
     public String getPlataforma() {
         return plataforma;
-    }
-
-    public void setPlataforma(String plataforma) {
-        this.plataforma = plataforma;
     }
 }

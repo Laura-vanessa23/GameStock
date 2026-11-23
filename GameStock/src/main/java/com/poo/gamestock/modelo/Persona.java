@@ -4,76 +4,23 @@
  */
 package com.poo.gamestock.modelo;
 
-public abstract class Producto {
+public abstract class Persona {
 
-    protected String codigo;
-    protected String nombre;
-    protected double precio;
-    protected int stock;
-    protected String plataforma;
+    private String nombre;
 
-    public Producto(String codigo, String nombre, double precio,
-                    int stock, String plataforma) {
-
-        if (codigo == null || codigo.trim().isEmpty()
-                || nombre == null || nombre.trim().isEmpty()
-                || precio <= 0 || stock < 0
-                || plataforma == null || plataforma.trim().isEmpty()) {
-            throw new IllegalArgumentException("Datos del producto invalidos.");
-        }
-
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.stock = stock;
-        this.plataforma = plataforma;
-    }
-
-    public abstract double calcularPrecioFinal();
-
-    public int consultarStock() {
-        return stock;
-    }
-
-    public void actualizarStock(int cantidad) {
-        if (stock + cantidad < 0) {
-            throw new IllegalArgumentException("Stock insuficiente.");
-        }
-        stock += cantidad;
-    }
-
-    public void mostrarInfo() {
-        System.out.println("Codigo: " + codigo
-                + " | Nombre: " + nombre
-                + " | Precio: $" + precio
-                + " | Stock: " + stock
-                + " | Plataforma: " + plataforma);
-    }
-
-    public String getCodigo() {
-        return codigo;
+    // Constructor con el nombre
+    public Persona(String nombre) {
+        setNombre(nombre);
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public double getPrecio() {
-        return precio;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        if (stock < 0) {
-            throw new IllegalArgumentException("Stock invalido.");
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacio.");
         }
-        this.stock = stock;
-    }
-
-    public String getPlataforma() {
-        return plataforma;
+        this.nombre = nombre.trim();
     }
 }

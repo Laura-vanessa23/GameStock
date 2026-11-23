@@ -4,7 +4,10 @@ import com.poo.gamestock.modelo.VideojuegoFisico;
 import com.poo.gamestock.modelo.VideojuegoDigital;
 import com.poo.gamestock.modelo.Cliente;
 import com.poo.gamestock.modelo.Consola;
+import com.poo.gamestock.modelo.Descargable;
+import com.poo.gamestock.modelo.Enviable;
 import com.poo.gamestock.modelo.Factura;
+import com.poo.gamestock.modelo.Garantizable;
 import com.poo.gamestock.modelo.Inventario;
 import com.poo.gamestock.modelo.Producto;
 import com.poo.gamestock.modelo.Vendedor;
@@ -64,42 +67,17 @@ public class Controlador {
     }
 
     // --- 1. Listar productos ---
-   private void listarProductos() {
-
-    if (inventario.listarProductos().isEmpty()) {
-        vista.mostrarMensaje("El inventario esta vacio");
-        return;
-    }
-
-    for (Producto p : inventario.listarProductos()) {
-
-        p.mostrarInfo();
-
-        vista.mostrarMensaje(
-                "Precio final: $" + p.calcularPrecioFinal());
-
-        if (p instanceof Consola) {
-
-            Consola consola = (Consola) p;
-
-            double descuento = vista.leerDecimal(
-                    "Ingrese descuento para la consola (%)");
-
-            vista.mostrarMensaje(
-                    "Precio con descuento: $"
-                    + consola.calcularPrecioFinal(descuento));
-
-            double envio = vista.leerDecimal(
-                    "Ingrese costo de envio");
-
-            vista.mostrarMensaje(
-                    "Precio con descuento y envio: $"
-                    + consola.calcularPrecioFinal(descuento, envio));
+    private void listarProductos() {
+        if (inventario.listarProductos().isEmpty()) {
+            vista.mostrarMensaje("El inventario esta vacio");
         }
-
-        vista.mostrarMensaje("");
+        for (Producto p : inventario.listarProductos()) {
+            p.mostrarInfo();
+            vista.mostrarMensaje("Precio final: $" + String.format("%,.2f", p.calcularPrecioFinal()));
+            vista.mostrarMensaje("");
+        }
     }
-}
+
     // --- 2. Agregar Videojuego ---
     private void agregarVideojuego() {
         String codigo = vista.leerTexto("Codigo");
@@ -155,7 +133,25 @@ public class Controlador {
             return;
         }
         producto.mostrarInfo();
-        vista.mostrarMensaje("Precio final: $" + (long) producto.calcularPrecioFinal());
+        vista.mostrarMensaje("Precio final: $" + String.format("%,.2f", producto.calcularPrecioFinal()));
+        mostrarDatosExtra(producto);
+    }
+
+    // Aqui se usan las interfaces con la referencia de Producto
+    // cada producto muestra solo lo que le corresponde
+    private void mostrarDatosExtra(Producto producto) {
+        if (producto instanceof Enviable) {
+            Enviable enviable = (Enviable) producto;
+            vista.mostrarMensaje("Costo de envio: $" + String.format("%,.2f", enviable.calcularCostoEnvio()));
+        }
+        if (producto instanceof Garantizable) {
+            Garantizable garantizable = (Garantizable) producto;
+            vista.mostrarMensaje(garantizable.describirGarantia());
+        }
+        if (producto instanceof Descargable) {
+            Descargable descargable = (Descargable) producto;
+            vista.mostrarMensaje("Tiempo de descarga: " + String.format("%.1f", descargable.calcularTiempoDescargaMinutos()) + " min");
+        }
     }
 
     // --- 5. Eliminar Producto ---
@@ -200,7 +196,7 @@ public class Controlador {
         }
         Cliente cliente = buscarCliente(vista.leerTexto("Documento del cliente"));
         if (cliente == null) {
-            vista.mostrarMensaje("Cliente no encontrado, registrelo primero");
+            vista.mostrarMensaje("Cliente no encontrado. Registrelo primero");
             return;
         }
         Factura factura = vendedor.registrarVenta("F-" + (facturas.size() + 1), cliente);
@@ -216,14 +212,15 @@ public class Controlador {
                 continue;
             }
             int cantidad = vista.leerEntero("Cantidad (stock: " + producto.getStock() + ")");
+            double descuento = vista.leerDecimal("Descuento adicional en % (0 si no hay)");
             try {
-                agregarLinea(factura, producto, cantidad);
+                agregarLinea(factura, producto, cantidad, descuento);
             } catch (IllegalArgumentException e) {
                 vista.mostrarMensaje("Error: " + e.getMessage());
             }
         }
         if (factura.getDetalles().isEmpty()) {
-            vista.mostrarMensaje("Venta cancelada, no se agregaron productos");
+            vista.mostrarMensaje("Venta cancelada. No se agregaron productos");
             return;
         }
         guardarFactura(factura);
@@ -259,8 +256,14 @@ public class Controlador {
         }
     }
 
+    // Linea sin descuento
     private void agregarLinea(Factura factura, Producto producto, int cantidad) {
-        factura.agregarDetalle(producto, cantidad);
+        agregarLinea(factura, producto, cantidad, 0);
+    }
+
+    // Linea con descuento adicional
+    private void agregarLinea(Factura factura, Producto producto, int cantidad, double descuento) {
+        factura.agregarDetalle(producto, cantidad, descuento);
         producto.actualizarStock(-cantidad);
     }
 
