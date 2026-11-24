@@ -4,6 +4,8 @@
  */
 package com.poo.gamestock.modelo;
 
+import com.poo.gamestock.excepciones.StockInsuficienteException;
+
 /**
  *
  * @author Jesús Gudiño
@@ -17,12 +19,14 @@ public class DetalleFactura {
     private Producto producto;
 
     // Constructor sin descuento
-    public DetalleFactura(Producto producto, int cantidad) {
+    public DetalleFactura(Producto producto, int cantidad)
+            throws StockInsuficienteException {
         this(producto, cantidad, 0);
     }
 
     // Constructor con descuento adicional
-    public DetalleFactura(Producto producto, int cantidad, double descuentoPorcentaje) {
+    public DetalleFactura(Producto producto, int cantidad, double descuentoPorcentaje)
+            throws StockInsuficienteException {
         if (producto == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo");
         }
@@ -30,7 +34,7 @@ public class DetalleFactura {
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         }
         if (cantidad > producto.getStock()) {
-            throw new IllegalArgumentException("La cantidad supera el stock disponible");
+            throw new StockInsuficienteException(producto.getStock(), cantidad);
         }
         this.producto = producto;
         this.cantidad = cantidad;
@@ -58,12 +62,12 @@ public class DetalleFactura {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public void setCantidad(int cantidad) throws StockInsuficienteException {
         if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
         }
         if (producto != null && cantidad > producto.getStock()) {
-            throw new IllegalArgumentException("La cantidad supera el stock disponible");
+            throw new StockInsuficienteException(producto.getStock(), cantidad);
         }
         this.cantidad = cantidad;
     }

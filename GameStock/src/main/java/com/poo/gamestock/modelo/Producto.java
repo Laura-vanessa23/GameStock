@@ -4,6 +4,8 @@
  */
 package com.poo.gamestock.modelo;
 
+import com.poo.gamestock.excepciones.StockInsuficienteException;
+
 public abstract class Producto implements Descontable {
 
     protected String codigo;
@@ -55,9 +57,10 @@ public abstract class Producto implements Descontable {
         return stock;
     }
 
-    public void actualizarStock(int cantidad) {
+    // Lanza StockInsuficienteException si el stock quedaria negativo
+    public void actualizarStock(int cantidad) throws StockInsuficienteException {
         if (stock + cantidad < 0) {
-            throw new IllegalArgumentException("Stock insuficiente.");
+            throw new StockInsuficienteException(stock, -cantidad);
         }
         stock += cantidad;
     }

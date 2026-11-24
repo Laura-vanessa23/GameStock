@@ -4,6 +4,7 @@
  */
 package com.poo.gamestock.modelo;
 
+import com.poo.gamestock.excepciones.StockInsuficienteException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,15 @@ public class Factura {
         calcularTotal();
     }
 
-    // Sobrecarga 2
-    public void agregarDetalle(Producto producto, int cantidad) {
+       // Sobrecarga 2
+    public void agregarDetalle(Producto producto, int cantidad)
+            throws StockInsuficienteException {
         agregarDetalle(new DetalleFactura(producto, cantidad));
     }
 
-    // Sobrecarga 3: con descuento adicional
-    public void agregarDetalle(Producto producto, int cantidad, double descuentoPorcentaje) {
+    // Sobrecarga 3 con descuento adicional
+    public void agregarDetalle(Producto producto, int cantidad, double descuentoPorcentaje)
+            throws StockInsuficienteException {
         agregarDetalle(new DetalleFactura(producto, cantidad, descuentoPorcentaje));
     }
 

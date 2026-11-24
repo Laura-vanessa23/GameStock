@@ -1,5 +1,9 @@
 package com.poo.gamestock.controlador;
 
+import com.poo.gamestock.excepciones.GameStockException;
+import com.poo.gamestock.excepciones.ProductoDuplicadoException;
+import com.poo.gamestock.excepciones.ProductoNoEncontradoException;
+import com.poo.gamestock.excepciones.StockInsuficienteException;
 import com.poo.gamestock.modelo.VideojuegoFisico;
 import com.poo.gamestock.modelo.VideojuegoDigital;
 import com.poo.gamestock.modelo.Cliente;
@@ -47,20 +51,42 @@ public class Controlador {
             opcion = vista.leerEntero("Opcion");
             try {
                 switch (opcion) {
-                    case 1 -> listarProductos();
-                    case 2 -> agregarVideojuego();
-                    case 3 -> agregarConsola();
-                    case 4 -> buscarProducto();
-                    case 5 -> eliminarProducto();
-                    case 6 -> actualizarStock();
-                    case 7 -> registrarCliente();
-                    case 8 -> registrarVenta();
-                    case 9 -> verFacturas();
-                    case 10 -> historialCliente();
-                    case 0 -> vista.mostrarMensaje("Hasta pronto");
-                    default -> vista.mostrarMensaje("Opcion no valida");
+                    case 1 ->
+                        listarProductos();
+                    case 2 ->
+                        agregarVideojuego();
+                    case 3 ->
+                        agregarConsola();
+                    case 4 ->
+                        buscarProducto();
+                    case 5 ->
+                        eliminarProducto();
+                    case 6 ->
+                        actualizarStock();
+                    case 7 ->
+                        registrarCliente();
+                    case 8 ->
+                        registrarVenta();
+                    case 9 ->
+                        verFacturas();
+                    case 10 ->
+                        historialCliente();
+                    case 0 ->
+                        vista.mostrarMensaje("Hasta pronto");
+                    default ->
+                        vista.mostrarMensaje("Opcion no valida");
                 }
+            } catch (ProductoDuplicadoException e) {
+                // Se intento agregar un codigo repetido
+                vista.mostrarMensaje("Duplicado: " + e.getMessage());
+            } catch (ProductoNoEncontradoException e) {
+                // Se busco un codigo que no existe
+                vista.mostrarMensaje("No encontrado: " + e.getMessage());
+            } catch (GameStockException e) {
+                // Cualquier otra excepcion del sistema
+                vista.mostrarMensaje("Error del sistema: " + e.getMessage());
             } catch (IllegalArgumentException e) {
+                // Datos mal escritos
                 vista.mostrarMensaje("Error: " + e.getMessage());
             }
         } while (opcion != 0);
@@ -79,7 +105,7 @@ public class Controlador {
     }
 
     // --- 2. Agregar Videojuego ---
-    private void agregarVideojuego() {
+    private void agregarVideojuego() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
         double precio = vista.leerDecimal("Precio");
@@ -110,7 +136,7 @@ public class Controlador {
     }
 
     // --- 3. Agregar consola ---
-    private void agregarConsola() {
+    private void agregarConsola() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
         double precio = vista.leerDecimal("Precio");
@@ -155,13 +181,14 @@ public class Controlador {
     }
 
     // --- 5. Eliminar Producto ---
-    private void eliminarProducto() {
+    private void eliminarProducto() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto a eliminar");
         inventario.eliminarProducto(codigo);
+        vista.mostrarMensaje("Producto eliminado");
     }
 
     // --- 6. Actualizar Stock ---
-    private void actualizarStock() {
+    private void actualizarStock() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
         if (producto == null) {
@@ -201,24 +228,34 @@ public class Controlador {
         }
         Factura factura = vendedor.registrarVenta("F-" + (facturas.size() + 1), cliente);
         vista.mostrarMensaje("Agregue productos (codigo vacio para terminar)");
-        while (true) {
-            String codigo = vista.leerTexto("Codigo del producto");
-            if (codigo.isEmpty()) {
-                break;
+
+        try {
+            while (true) {
+                String codigo = vista.leerTexto("Codigo del producto");
+                if (codigo.isEmpty()) {
+                    break;
+                }
+                Producto producto = inventario.buscarProducto(codigo);
+                if (producto == null) {
+                    vista.mostrarMensaje("Producto no encontrado");
+                    continue;
+                }
+                int cantidad = vista.leerEntero("Cantidad (stock: " + producto.getStock() + ")");
+                double descuento = vista.leerDecimal("Descuento adicional en % (0 si no hay)");
+                try {
+                    agregarLinea(factura, producto, cantidad, descuento);
+                } catch (StockInsuficienteException e) {
+                    // No alcanza el stock para esa cantidad
+                    vista.mostrarMensaje("Stock: " + e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    vista.mostrarMensaje("Error: " + e.getMessage());
+                }
             }
-            Producto producto = inventario.buscarProducto(codigo);
-            if (producto == null) {
-                vista.mostrarMensaje("Producto no encontrado");
-                continue;
-            }
-            int cantidad = vista.leerEntero("Cantidad (stock: " + producto.getStock() + ")");
-            double descuento = vista.leerDecimal("Descuento adicional en % (0 si no hay)");
-            try {
-                agregarLinea(factura, producto, cantidad, descuento);
-            } catch (IllegalArgumentException e) {
-                vista.mostrarMensaje("Error: " + e.getMessage());
-            }
+        } finally {
+            // Esto se ejecuta siempre al terminar de agregar productos
+            vista.mostrarMensaje("Fin del registro de productos");
         }
+
         if (factura.getDetalles().isEmpty()) {
             vista.mostrarMensaje("Venta cancelada. No se agregaron productos");
             return;
@@ -257,12 +294,14 @@ public class Controlador {
     }
 
     // Linea sin descuento
-    private void agregarLinea(Factura factura, Producto producto, int cantidad) {
+    private void agregarLinea(Factura factura, Producto producto, int cantidad)
+            throws StockInsuficienteException {
         agregarLinea(factura, producto, cantidad, 0);
     }
 
     // Linea con descuento adicional
-    private void agregarLinea(Factura factura, Producto producto, int cantidad, double descuento) {
+    private void agregarLinea(Factura factura, Producto producto, int cantidad, double descuento)
+            throws StockInsuficienteException {
         factura.agregarDetalle(producto, cantidad, descuento);
         producto.actualizarStock(-cantidad);
     }
@@ -291,39 +330,45 @@ public class Controlador {
     }
 
     private void cargarDatos() {
-        inventario.agregarProducto(new VideojuegoFisico(
-                "VJ001", "God of War Ragnarok", 219000, 10,
-                "PlayStation 5", "Accion", "M", "Estandar"));
+        // Los metodos de aqui pueden lanzar excepciones del sistema
+        // por eso va todo dentro de un try
+        try {
+            inventario.agregarProducto(new VideojuegoFisico(
+                    "VJ001", "God of War Ragnarok", 219000, 10,
+                    "PlayStation 5", "Accion", "M", "Estandar"));
 
-        inventario.agregarProducto(new VideojuegoDigital(
-                "VJ002", "Forza Horizon 6", 279900, 8,
-                "Xbox Series X|S", "Carreras", "E", 120.5));
+            inventario.agregarProducto(new VideojuegoDigital(
+                    "VJ002", "Forza Horizon 6", 279900, 8,
+                    "Xbox Series X|S", "Carreras", "E", 120.5));
 
-        inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
-        inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
+            inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
+            inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 
-        Vendedor v1 = new Vendedor(1, "Laura Ariza");
-        Vendedor v2 = new Vendedor(2, "Gabriel Rojas");
-        vendedores.add(v1);
-        vendedores.add(v2);
+            Vendedor v1 = new Vendedor(1, "Laura Ariza");
+            Vendedor v2 = new Vendedor(2, "Gabriel Rojas");
+            vendedores.add(v1);
+            vendedores.add(v2);
 
-        Cliente c1 = new Cliente(1, "Ana Torres", "1001", "ana@correo.com", "3001234567");
-        Cliente c2 = new Cliente(2, "Luis Gomez", "1002", "luis@correo.com", "3109876543");
-        clientes.add(c1);
-        clientes.add(c2);
+            Cliente c1 = new Cliente(1, "Ana Torres", "1001", "ana@correo.com", "3001234567");
+            Cliente c2 = new Cliente(2, "Luis Gomez", "1002", "luis@correo.com", "3109876543");
+            clientes.add(c1);
+            clientes.add(c2);
 
-        Factura f1 = v1.registrarVenta("F-1", c1);
-        agregarLinea(f1, inventario.buscarProducto("VJ001"), 1);
-        agregarLinea(f1, inventario.buscarProducto("CS001"), 1);
-        guardarFactura(f1);
+            Factura f1 = v1.registrarVenta("F-1", c1);
+            agregarLinea(f1, inventario.buscarProducto("VJ001"), 1);
+            agregarLinea(f1, inventario.buscarProducto("CS001"), 1);
+            guardarFactura(f1);
 
-        Factura f2 = v2.registrarVenta("F-2", c2);
-        agregarLinea(f2, inventario.buscarProducto("VJ002"), 2);
-        guardarFactura(f2);
+            Factura f2 = v2.registrarVenta("F-2", c2);
+            agregarLinea(f2, inventario.buscarProducto("VJ002"), 2);
+            guardarFactura(f2);
 
-        Factura f3 = v1.registrarVenta("F-3", c2);
-        agregarLinea(f3, inventario.buscarProducto("CS002"), 1);
-        agregarLinea(f3, inventario.buscarProducto("VJ002"), 2);
-        guardarFactura(f3);
+            Factura f3 = v1.registrarVenta("F-3", c2);
+            agregarLinea(f3, inventario.buscarProducto("CS002"), 1);
+            agregarLinea(f3, inventario.buscarProducto("VJ002"), 2);
+            guardarFactura(f3);
+        } catch (GameStockException e) {
+            vista.mostrarMensaje("Error al cargar los datos: " + e.getMessage());
+        }
     }
 }

@@ -5,6 +5,8 @@
 
 package com.poo.gamestock.modelo;
 
+import com.poo.gamestock.excepciones.ProductoDuplicadoException;
+import com.poo.gamestock.excepciones.ProductoNoEncontradoException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,9 @@ public class Inventario {
         fechaUltimaActualizacion = LocalDate.now();
     }
 
-    public synchronized void agregarProducto(Producto producto) {
+    // Lanza ProductoDuplicadoException si el codigo ya existe
+    public synchronized void agregarProducto(Producto producto)
+            throws ProductoDuplicadoException {
 
         if (producto == null) {
             throw new IllegalArgumentException(
@@ -29,8 +33,7 @@ public class Inventario {
         for (Producto p : productos) {
             if (p.getCodigo().equalsIgnoreCase(
                     producto.getCodigo())) {
-                throw new IllegalArgumentException(
-                        "Ya existe un producto con ese codigo.");
+                throw new ProductoDuplicadoException(producto.getCodigo());
             }
         }
 
@@ -40,13 +43,14 @@ public class Inventario {
         System.out.println("Producto agregado correctamente.");
     }
 
-    public synchronized void eliminarProducto(String codigo) {
+    // Lanza ProductoNoEncontradoException si el codigo no existe
+    public synchronized void eliminarProducto(String codigo)
+            throws ProductoNoEncontradoException {
 
         Producto producto = buscarProducto(codigo);
 
         if (producto == null) {
-            throw new IllegalArgumentException(
-                    "El producto no existe.");
+            throw new ProductoNoEncontradoException(codigo);
         }
 
         productos.remove(producto);
@@ -68,14 +72,15 @@ public class Inventario {
         return null;
     }
 
+    // Lanza ProductoNoEncontradoException si el codigo no existe
     public synchronized void actualizarStock(
-            String codigo, int cantidad) {
+            String codigo, int cantidad)
+            throws ProductoNoEncontradoException {
 
         Producto producto = buscarProducto(codigo);
 
         if (producto == null) {
-            throw new IllegalArgumentException(
-                    "El producto no existe.");
+            throw new ProductoNoEncontradoException(codigo);
         }
 
         producto.setStock(cantidad);
