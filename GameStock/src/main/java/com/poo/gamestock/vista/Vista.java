@@ -23,6 +23,7 @@ public class Vista {
         System.out.println("9. Ver todas las facturas");
         System.out.println("10. Historial de un cliente");
         System.out.println("0. Salir");
+        System.out.println("11. Simular ventas simultaneas");
     }
  
     public void mostrarMensaje(String mensaje) {

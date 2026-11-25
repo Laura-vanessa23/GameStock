@@ -53,25 +53,41 @@ public abstract class Producto implements Descontable {
         return calcularPrecioFinal(descuentoPorcentaje) + costoEnvio;
     }
 
-    public int consultarStock() {
+    // Los metodos del stock son synchronized
+    // asi solo un hilo a la vez puede usarlos
+
+    public synchronized int consultarStock() {
         return stock;
     }
 
-    // Lanza StockInsuficienteException si el stock quedaria negativo
-    public void actualizarStock(int cantidad) throws StockInsuficienteException {
+    // Revisa el stock y lo descuenta como una sola operacion
+    // lanza StockInsuficienteException si el stock quedaria negativo
+    public synchronized void actualizarStock(int cantidad)
+            throws StockInsuficienteException {
         if (stock + cantidad < 0) {
             throw new StockInsuficienteException(stock, -cantidad);
         }
         stock += cantidad;
     }
 
+    public synchronized int getStock() {
+        return stock;
+    }
+
+    public synchronized void setStock(int stock) {
+        if (stock < 0) {
+            throw new IllegalArgumentException("Stock invalido.");
+        }
+        this.stock = stock;
+    }
+
     public void mostrarInfo() {
-    System.out.println("Codigo: " + codigo
-            + " | Nombre: " + nombre
-            + " | Precio: $" + String.format("%,.2f", precio)
-            + " | Stock: " + stock
-            + " | Plataforma: " + plataforma);
-}
+        System.out.println("Codigo: " + codigo
+                + " | Nombre: " + nombre
+                + " | Precio: $" + String.format("%,.2f", precio)
+                + " | Stock: " + getStock()
+                + " | Plataforma: " + plataforma);
+    }
 
     public String getCodigo() {
         return codigo;
@@ -83,17 +99,6 @@ public abstract class Producto implements Descontable {
 
     public double getPrecio() {
         return precio;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        if (stock < 0) {
-            throw new IllegalArgumentException("Stock invalido.");
-        }
-        this.stock = stock;
     }
 
     public String getPlataforma() {

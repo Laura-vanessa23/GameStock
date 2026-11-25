@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.poo.gamestock.controlador;
 
 import com.poo.gamestock.excepciones.GameStockException;
@@ -12,6 +16,7 @@ import com.poo.gamestock.modelo.Descargable;
 import com.poo.gamestock.modelo.Enviable;
 import com.poo.gamestock.modelo.Factura;
 import com.poo.gamestock.modelo.Garantizable;
+import com.poo.gamestock.modelo.HiloVenta;
 import com.poo.gamestock.modelo.Inventario;
 import com.poo.gamestock.modelo.Producto;
 import com.poo.gamestock.modelo.Vendedor;
@@ -51,30 +56,19 @@ public class Controlador {
             opcion = vista.leerEntero("Opcion");
             try {
                 switch (opcion) {
-                    case 1 ->
-                        listarProductos();
-                    case 2 ->
-                        agregarVideojuego();
-                    case 3 ->
-                        agregarConsola();
-                    case 4 ->
-                        buscarProducto();
-                    case 5 ->
-                        eliminarProducto();
-                    case 6 ->
-                        actualizarStock();
-                    case 7 ->
-                        registrarCliente();
-                    case 8 ->
-                        registrarVenta();
-                    case 9 ->
-                        verFacturas();
-                    case 10 ->
-                        historialCliente();
-                    case 0 ->
-                        vista.mostrarMensaje("Hasta pronto");
-                    default ->
-                        vista.mostrarMensaje("Opcion no valida");
+                    case 1 -> listarProductos();
+                    case 2 -> agregarVideojuego();
+                    case 3 -> agregarConsola();
+                    case 4 -> buscarProducto();
+                    case 5 -> eliminarProducto();
+                    case 6 -> actualizarStock();
+                    case 7 -> registrarCliente();
+                    case 8 -> registrarVenta();
+                    case 9 -> verFacturas();
+                    case 10 -> historialCliente();
+                    case 11 -> simularVentasSimultaneas();
+                    case 0 -> vista.mostrarMensaje("Hasta pronto");
+                    default -> vista.mostrarMensaje("Opcion no valida");
                 }
             } catch (ProductoDuplicadoException e) {
                 // Se intento agregar un codigo repetido
@@ -92,7 +86,7 @@ public class Controlador {
         } while (opcion != 0);
     }
 
-    // --- 1. Listar productos ---
+  
     private void listarProductos() {
         if (inventario.listarProductos().isEmpty()) {
             vista.mostrarMensaje("El inventario esta vacio");
@@ -104,7 +98,6 @@ public class Controlador {
         }
     }
 
-    // --- 2. Agregar Videojuego ---
     private void agregarVideojuego() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
@@ -135,7 +128,7 @@ public class Controlador {
         inventario.agregarProducto(juego);
     }
 
-    // --- 3. Agregar consola ---
+
     private void agregarConsola() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
@@ -150,7 +143,6 @@ public class Controlador {
         inventario.agregarProducto(consola);
     }
 
-    // --- 4. Buscar Producto ---
     private void buscarProducto() {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
@@ -180,14 +172,13 @@ public class Controlador {
         }
     }
 
-    // --- 5. Eliminar Producto ---
+  
     private void eliminarProducto() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto a eliminar");
         inventario.eliminarProducto(codigo);
         vista.mostrarMensaje("Producto eliminado");
     }
 
-    // --- 6. Actualizar Stock ---
     private void actualizarStock() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
@@ -199,7 +190,6 @@ public class Controlador {
         inventario.actualizarStock(codigo, nuevoStock);
     }
 
-    // --- 7. Registrar Cliente ---
     private void registrarCliente() {
         String nombre = vista.leerTexto("Nombre");
         String documento = vista.leerTexto("Documento");
@@ -214,7 +204,6 @@ public class Controlador {
         cliente.registrarCliente();
     }
 
-    // --- 8. Registrar Venta ---
     private void registrarVenta() {
         Vendedor vendedor = buscarVendedor(vista.leerEntero("Codigo del vendedor"));
         if (vendedor == null) {
@@ -264,7 +253,6 @@ public class Controlador {
         vista.mostrarMensaje(factura.generarComprobante());
     }
 
-    // --- 9. Ver Facturas ---
     private void verFacturas() {
         if (facturas.isEmpty()) {
             vista.mostrarMensaje("Todavia no hay facturas");
@@ -276,7 +264,6 @@ public class Controlador {
         }
     }
 
-    // --- 10. Historial del Cliente ---
     private void historialCliente() {
         Cliente cliente = buscarCliente(vista.leerTexto("Documento del cliente"));
         if (cliente == null) {
@@ -291,6 +278,53 @@ public class Controlador {
             vista.mostrarMensaje(f.generarComprobante());
             vista.mostrarMensaje("");
         }
+    }
+
+    
+    // Crea varios hilos que compran el mismo producto al mismo tiempo
+    private void simularVentasSimultaneas() {
+        String codigo = vista.leerTexto("Codigo del producto");
+        Producto producto = inventario.buscarProducto(codigo);
+        if (producto == null) {
+            vista.mostrarMensaje("Producto no encontrado");
+            return;
+        }
+        int cantidadVendedores = vista.leerEntero("Cuantos vendedores compran al mismo tiempo");
+        int cantidad = vista.leerEntero("Cantidad que compra cada uno");
+        if (cantidadVendedores <= 0 || cantidad <= 0) {
+            throw new IllegalArgumentException("Los valores deben ser mayores a 0.");
+        }
+
+        vista.mostrarMensaje("Stock inicial: " + producto.getStock());
+
+        // Se crean y se arrancan todos los hilos
+        List<HiloVenta> hilos = new ArrayList<>();
+        for (int i = 1; i <= cantidadVendedores; i++) {
+            HiloVenta hilo = new HiloVenta("Vendedor-" + i, producto, cantidad);
+            hilos.add(hilo);
+            hilo.start();
+        }
+
+        // join espera a que cada hilo termine antes de seguir
+        for (HiloVenta hilo : hilos) {
+            try {
+                hilo.join();
+            } catch (InterruptedException e) {
+                vista.mostrarMensaje("La simulacion fue interrumpida");
+            }
+        }
+
+        // Se cuentan las compras que salieron bien
+        int exitosas = 0;
+        for (HiloVenta hilo : hilos) {
+            if (hilo.isExito()) {
+                exitosas++;
+            }
+        }
+
+        vista.mostrarMensaje("Ventas exitosas: " + exitosas);
+        vista.mostrarMensaje("Ventas rechazadas: " + (hilos.size() - exitosas));
+        vista.mostrarMensaje("Stock final: " + producto.getStock());
     }
 
     // Linea sin descuento
