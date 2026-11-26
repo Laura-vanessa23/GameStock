@@ -4,6 +4,7 @@
  */
 package com.poo.gamestock.controlador;
 
+import com.poo.gamestock.excepciones.ArchivoException;
 import com.poo.gamestock.excepciones.GameStockException;
 import com.poo.gamestock.excepciones.ProductoDuplicadoException;
 import com.poo.gamestock.excepciones.ProductoNoEncontradoException;
@@ -16,6 +17,7 @@ import com.poo.gamestock.modelo.Descargable;
 import com.poo.gamestock.modelo.Enviable;
 import com.poo.gamestock.modelo.Factura;
 import com.poo.gamestock.modelo.Garantizable;
+import com.poo.gamestock.modelo.GestorArchivos;
 import com.poo.gamestock.modelo.HiloVenta;
 import com.poo.gamestock.modelo.Inventario;
 import com.poo.gamestock.modelo.Producto;
@@ -26,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Jesús Gudiño
+ 
  */
 public class Controlador {
 
@@ -36,6 +37,7 @@ public class Controlador {
     private List<Cliente> clientes;
     private List<Vendedor> vendedores;
     private List<Factura> facturas;
+    private GestorArchivos gestor;
 
     public Controlador(Vista vista) {
         if (vista == null) {
@@ -46,6 +48,8 @@ public class Controlador {
         this.clientes = new ArrayList<>();
         this.vendedores = new ArrayList<>();
         this.facturas = new ArrayList<>();
+        // Los archivos se guardan en la carpeta datos
+        this.gestor = new GestorArchivos("datos");
         cargarDatos();
     }
 
@@ -67,7 +71,9 @@ public class Controlador {
                     case 9 -> verFacturas();
                     case 10 -> historialCliente();
                     case 11 -> simularVentasSimultaneas();
-                    case 0 -> vista.mostrarMensaje("Hasta pronto");
+                    case 12 -> guardarDatos();
+                    case 13 -> recargarDatos();
+                    case 0 -> salir();
                     default -> vista.mostrarMensaje("Opcion no valida");
                 }
             } catch (ProductoDuplicadoException e) {
@@ -76,6 +82,9 @@ public class Controlador {
             } catch (ProductoNoEncontradoException e) {
                 // Se busco un codigo que no existe
                 vista.mostrarMensaje("No encontrado: " + e.getMessage());
+            } catch (ArchivoException e) {
+                // Fallo algo al leer o escribir un archivo
+                vista.mostrarMensaje("Archivo: " + e.getMessage());
             } catch (GameStockException e) {
                 // Cualquier otra excepcion del sistema
                 vista.mostrarMensaje("Error del sistema: " + e.getMessage());
@@ -86,7 +95,7 @@ public class Controlador {
         } while (opcion != 0);
     }
 
-  
+    // --- 1. Listar productos ---
     private void listarProductos() {
         if (inventario.listarProductos().isEmpty()) {
             vista.mostrarMensaje("El inventario esta vacio");
@@ -98,6 +107,7 @@ public class Controlador {
         }
     }
 
+    // --- 2. Agregar Videojuego ---
     private void agregarVideojuego() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
@@ -128,7 +138,7 @@ public class Controlador {
         inventario.agregarProducto(juego);
     }
 
-
+    // --- 3. Agregar consola ---
     private void agregarConsola() throws ProductoDuplicadoException {
         String codigo = vista.leerTexto("Codigo");
         String nombre = vista.leerTexto("Nombre");
@@ -143,6 +153,7 @@ public class Controlador {
         inventario.agregarProducto(consola);
     }
 
+    // --- 4. Buscar Producto ---
     private void buscarProducto() {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
@@ -172,13 +183,14 @@ public class Controlador {
         }
     }
 
-  
+    // --- 5. Eliminar Producto ---
     private void eliminarProducto() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto a eliminar");
         inventario.eliminarProducto(codigo);
         vista.mostrarMensaje("Producto eliminado");
     }
 
+    // --- 6. Actualizar Stock ---
     private void actualizarStock() throws ProductoNoEncontradoException {
         String codigo = vista.leerTexto("Codigo del producto");
         Producto producto = inventario.buscarProducto(codigo);
@@ -190,6 +202,7 @@ public class Controlador {
         inventario.actualizarStock(codigo, nuevoStock);
     }
 
+    // --- 7. Registrar Cliente ---
     private void registrarCliente() {
         String nombre = vista.leerTexto("Nombre");
         String documento = vista.leerTexto("Documento");
@@ -204,6 +217,7 @@ public class Controlador {
         cliente.registrarCliente();
     }
 
+    // --- 8. Registrar Venta ---
     private void registrarVenta() {
         Vendedor vendedor = buscarVendedor(vista.leerEntero("Codigo del vendedor"));
         if (vendedor == null) {
@@ -253,6 +267,7 @@ public class Controlador {
         vista.mostrarMensaje(factura.generarComprobante());
     }
 
+    // --- 9. Ver Facturas ---
     private void verFacturas() {
         if (facturas.isEmpty()) {
             vista.mostrarMensaje("Todavia no hay facturas");
@@ -264,6 +279,7 @@ public class Controlador {
         }
     }
 
+    // --- 10. Historial del Cliente ---
     private void historialCliente() {
         Cliente cliente = buscarCliente(vista.leerTexto("Documento del cliente"));
         if (cliente == null) {
@@ -280,7 +296,7 @@ public class Controlador {
         }
     }
 
-    
+    // --- 11. Simular ventas simultaneas ---
     // Crea varios hilos que compran el mismo producto al mismo tiempo
     private void simularVentasSimultaneas() {
         String codigo = vista.leerTexto("Codigo del producto");
@@ -327,6 +343,50 @@ public class Controlador {
         vista.mostrarMensaje("Stock final: " + producto.getStock());
     }
 
+    // --- 12. Guardar datos ---
+    // Guarda el inventario los clientes y las facturas en la carpeta datos
+    private void guardarDatos() throws ArchivoException {
+        gestor.guardarProductos(inventario.listarProductos());
+        gestor.guardarClientes(clientes);
+        gestor.guardarFacturas(facturas);
+        vista.mostrarMensaje("Datos guardados en la carpeta datos");
+    }
+
+    // --- 13. Cargar datos ---
+    // Lee los archivos y reemplaza lo que hay en memoria
+    private void recargarDatos() throws GameStockException {
+        cargarDesdeArchivos();
+        vista.mostrarMensaje("Datos cargados desde la carpeta datos");
+    }
+
+    // --- 0. Salir ---
+    private void salir() throws ArchivoException {
+        String respuesta = vista.leerTexto("Guardar los cambios antes de salir (S o N)");
+        if (respuesta.trim().equalsIgnoreCase("S")) {
+            guardarDatos();
+        }
+        vista.mostrarMensaje("Hasta pronto");
+    }
+
+    // Lee los tres archivos y solo si todo sale bien cambia los datos del sistema
+    // asi si un archivo esta roto no se pierde lo que ya estaba cargado
+    private void cargarDesdeArchivos() throws GameStockException {
+        Inventario nuevoInventario = new Inventario();
+        for (Producto producto : gestor.cargarProductos()) {
+            nuevoInventario.agregarProducto(producto);
+        }
+        List<Cliente> nuevosClientes = gestor.cargarClientes();
+        List<Factura> nuevasFacturas = gestor.cargarFacturas(
+                nuevosClientes, vendedores, nuevoInventario);
+
+        inventario = nuevoInventario;
+        clientes = nuevosClientes;
+        facturas = new ArrayList<>();
+        for (Factura factura : nuevasFacturas) {
+            guardarFactura(factura);
+        }
+    }
+
     // Linea sin descuento
     private void agregarLinea(Factura factura, Producto producto, int cantidad)
             throws StockInsuficienteException {
@@ -363,9 +423,35 @@ public class Controlador {
         return null;
     }
 
+    // Al arrancar se cargan los vendedores y despues los datos
+    // si hay archivos guardados se leen y si no se usan los datos de ejemplo
     private void cargarDatos() {
-        // Los metodos de aqui pueden lanzar excepciones del sistema
-        // por eso va todo dentro de un try
+        cargarVendedores();
+
+        if (!gestor.existenDatos()) {
+            cargarDatosIniciales();
+            vista.mostrarMensaje("No hay archivos guardados. Se cargaron los datos de ejemplo");
+            return;
+        }
+
+        try {
+            cargarDesdeArchivos();
+            vista.mostrarMensaje("Datos cargados desde la carpeta datos");
+        } catch (GameStockException e) {
+            vista.mostrarMensaje("Error al cargar los archivos: " + e.getMessage());
+            vista.mostrarMensaje("Se cargaron los datos de ejemplo");
+            cargarDatosIniciales();
+        }
+    }
+
+    // Los vendedores siempre son los mismos y no se guardan en archivo
+    private void cargarVendedores() {
+        vendedores.add(new Vendedor(1, "Laura Ariza"));
+        vendedores.add(new Vendedor(2, "Gabriel Rojas"));
+    }
+
+    // Datos de ejemplo para cuando todavia no hay archivos
+    private void cargarDatosIniciales() {
         try {
             inventario.agregarProducto(new VideojuegoFisico(
                     "VJ001", "God of War Ragnarok", 219000, 10,
@@ -378,10 +464,8 @@ public class Controlador {
             inventario.agregarProducto(new Consola("CS001", "PlayStation 5 Slim", 2799800, 5, "PlayStation 5", "Slim", "1TB"));
             inventario.agregarProducto(new Consola("CS002", "Xbox Series S", 1540000, 4, "Xbox Series X|S", "Series S", "512GB"));
 
-            Vendedor v1 = new Vendedor(1, "Laura Ariza");
-            Vendedor v2 = new Vendedor(2, "Gabriel Rojas");
-            vendedores.add(v1);
-            vendedores.add(v2);
+            Vendedor v1 = buscarVendedor(1);
+            Vendedor v2 = buscarVendedor(2);
 
             Cliente c1 = new Cliente(1, "Ana Torres", "1001", "ana@correo.com", "3001234567");
             Cliente c2 = new Cliente(2, "Luis Gomez", "1002", "luis@correo.com", "3109876543");
@@ -402,7 +486,7 @@ public class Controlador {
             agregarLinea(f3, inventario.buscarProducto("VJ002"), 2);
             guardarFactura(f3);
         } catch (GameStockException e) {
-            vista.mostrarMensaje("Error al cargar los datos: " + e.getMessage());
+            vista.mostrarMensaje("Error al cargar los datos de ejemplo: " + e.getMessage());
         }
     }
 }

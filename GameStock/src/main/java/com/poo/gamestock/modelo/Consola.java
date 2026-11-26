@@ -26,7 +26,7 @@ public class Consola extends Producto implements Enviable, Garantizable {
         return precio;
     }
 
-    // Metodo de Enviable: lo que pesa una consola
+    // Metodo de Enviable lo que pesa una consola
     @Override
     public double getPesoKg() {
         return 4.5;
@@ -39,18 +39,24 @@ public class Consola extends Producto implements Enviable, Garantizable {
         return Enviable.super.calcularCostoEnvio() + 15000;
     }
 
-    // Metodo de Garantizable: meses de garantia de la consola
+    // Metodo de Garantizable meses de garantia de la consola
     @Override
     public int getMesesGarantia() {
         return 12;
+    }
+
+    // Metodo de Persistible: la consola como una linea de texto
+    @Override
+    public String aLinea() {
+        return unir("CONSOLA", codigo, nombre, String.valueOf(precio),
+                String.valueOf(getStock()), plataforma, modelo, almacenamiento);
     }
 
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
         System.out.println("Modelo: " + modelo
-                + " | Almacenamiento: " + almacenamiento
-                );
+                + " | Almacenamiento: " + almacenamiento);
     }
 
     public boolean verificarCompatibilidad() {

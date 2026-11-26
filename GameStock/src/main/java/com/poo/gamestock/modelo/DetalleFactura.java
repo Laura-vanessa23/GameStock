@@ -44,6 +44,27 @@ public class DetalleFactura {
         this.subtotal = precioUnitario * cantidad;
     }
 
+    // Constructor para cargar facturas guardadas en un archivo
+    // no revisa el stock porque la venta ya paso
+    // usa el precio guardado para que la factura no cambie
+    public DetalleFactura(Producto producto, int cantidad,
+                          double descuentoPorcentaje, double precioUnitario) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
+        }
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+        }
+        if (precioUnitario <= 0) {
+            throw new IllegalArgumentException("El precio unitario debe ser mayor a 0");
+        }
+        this.producto = producto;
+        this.cantidad = cantidad;
+        this.descuentoPorcentaje = descuentoPorcentaje;
+        this.precioUnitario = precioUnitario;
+        this.subtotal = precioUnitario * cantidad;
+    }
+
     public double calcularSubtotal() {
         subtotal = precioUnitario * cantidad;
         return subtotal;

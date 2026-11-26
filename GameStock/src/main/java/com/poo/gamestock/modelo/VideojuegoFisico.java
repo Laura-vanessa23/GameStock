@@ -35,6 +35,14 @@ public class VideojuegoFisico extends Videojuego implements Enviable {
         return 0.2;
     }
 
+    // Metodo de Persistible: el juego fisico como una linea de texto
+    @Override
+    public String aLinea() {
+        return unir("FISICO", codigo, nombre, String.valueOf(precio),
+                String.valueOf(getStock()), plataforma, getGenero(),
+                getClasificacionEdad(), edicion);
+    }
+
     @Override
     public void mostrarInfo() {
         super.mostrarInfo();
@@ -46,7 +54,7 @@ public class VideojuegoFisico extends Videojuego implements Enviable {
         return edicion;
     }
 
-    public void setEdicion(String edicion) {
+    public final void setEdicion(String edicion) {
         if (edicion == null || (!edicion.equalsIgnoreCase("Estandar") && !edicion.equalsIgnoreCase("Coleccionista"))) {
             throw new IllegalArgumentException("La edicion solo admite los valores 'Estandar' o 'Coleccionista'.");
         }

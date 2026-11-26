@@ -4,13 +4,10 @@
  */
 package com.poo.gamestock.modelo;
 
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cliente extends Persona {
+public class Cliente extends Persona implements Persistible {
 
     private int id;
     private String documento;
@@ -87,5 +84,11 @@ public class Cliente extends Persona {
         if (factura != null && !historialCompras.contains(factura)) {
             historialCompras.add(factura);
         }
+    }
+
+    // Metodo de Persistible: el cliente como una linea de texto
+    @Override
+    public String aLinea() {
+        return unir(String.valueOf(id), getNombre(), documento, correo, telefono);
     }
 }

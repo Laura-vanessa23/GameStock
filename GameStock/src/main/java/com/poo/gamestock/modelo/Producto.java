@@ -6,7 +6,7 @@ package com.poo.gamestock.modelo;
 
 import com.poo.gamestock.excepciones.StockInsuficienteException;
 
-public abstract class Producto implements Descontable {
+public abstract class Producto implements Descontable, Persistible {
 
     protected String codigo;
     protected String nombre;

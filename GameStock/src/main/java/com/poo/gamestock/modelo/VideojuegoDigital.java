@@ -13,16 +13,20 @@ public class VideojuegoDigital extends Videojuego implements Descargable {
     private double tamanioGB;
 
     // Constructor con todos los datos
-    public VideojuegoDigital(String codigo, String nombre, double precio, int stock, String plataforma,
-                             String genero, String clasificacionEdad, double tamanioGB) {
-        super(codigo, nombre, precio, stock, plataforma, genero, clasificacionEdad);
+    public VideojuegoDigital(String codigo, String nombre, double precio,
+                             int stock, String plataforma, String genero,
+                             String clasificacionEdad, double tamanioGB) {
+
+        super(codigo, nombre, precio, stock, plataforma,
+                genero, clasificacionEdad);
+
         setTamanioGB(tamanioGB);
     }
 
     // El digital tiene 10% de descuento
     @Override
     public double calcularPrecioFinal() {
-        return this.precio * 0.90;
+        return precio * 0.90;
     }
 
     @Override
@@ -30,10 +34,18 @@ public class VideojuegoDigital extends Videojuego implements Descargable {
         return "Digital";
     }
 
-    // Metodo de Descargable: arma el codigo con el codigo del juego y la hora
+    // Metodo de Descargable arma el codigo con el codigo del juego y la hora
     @Override
     public String generarCodigoDescarga() {
         return getCodigo() + "-" + System.currentTimeMillis();
+    }
+
+    // Metodo de Persistible: el juego digital como una linea de texto
+    @Override
+    public String aLinea() {
+        return unir("DIGITAL", codigo, nombre, String.valueOf(precio),
+                String.valueOf(getStock()), plataforma, getGenero(),
+                getClasificacionEdad(), String.valueOf(tamanioGB));
     }
 
     @Override
@@ -44,10 +56,10 @@ public class VideojuegoDigital extends Videojuego implements Descargable {
     }
 
     public boolean verificarDisponibilidadDigital() {
-        return this.stock > 0;
+        return stock > 0;
     }
 
-    // Metodo de Descargable: ya existia solo le agregue el Override
+    // Metodo de Descargable
     @Override
     public double getTamanioGB() {
         return tamanioGB;
@@ -55,8 +67,8 @@ public class VideojuegoDigital extends Videojuego implements Descargable {
 
     public void setTamanioGB(double tamanioGB) {
         if (tamanioGB <= 0) {
-            throw new IllegalArgumentException("El tamanio de la descarga debe ser mayor a 0.");
+            throw new IllegalArgumentException("Tamanio invalido.");
         }
         this.tamanioGB = tamanioGB;
     }
-}
+} 

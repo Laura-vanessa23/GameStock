@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Factura {
+public class Factura implements Persistible {
 
     private String numeroFactura;
     private LocalDate fecha;
@@ -20,7 +20,7 @@ public class Factura {
 
     // Constructor con todos los datos
     public Factura(String numeroFactura, LocalDate fecha,
-               Cliente cliente, Vendedor vendedor) {
+                   Cliente cliente, Vendedor vendedor) {
 
         setNumeroFactura(numeroFactura);
         setFecha(fecha);
@@ -41,7 +41,7 @@ public class Factura {
         calcularTotal();
     }
 
-       // Sobrecarga 2
+    // Sobrecarga 2
     public void agregarDetalle(Producto producto, int cantidad)
             throws StockInsuficienteException {
         agregarDetalle(new DetalleFactura(producto, cantidad));
@@ -83,6 +83,25 @@ public class Factura {
     public double calcularTotal() {
         total = calcularSubtotal() + calcularEnvio();
         return total;
+    }
+
+    // Metodo de Persistible: la factura como una linea de texto
+    // los detalles van separados por | y cada uno es codigo:cantidad:descuento:precio
+    @Override
+    public String aLinea() {
+        StringBuilder textoDetalles = new StringBuilder();
+        for (int i = 0; i < detalles.size(); i++) {
+            DetalleFactura d = detalles.get(i);
+            if (i > 0) {
+                textoDetalles.append("|");
+            }
+            textoDetalles.append(d.getProducto().getCodigo()).append(":")
+                    .append(d.getCantidad()).append(":")
+                    .append(d.getDescuentoPorcentaje()).append(":")
+                    .append(d.getPrecioUnitario());
+        }
+        return unir(numeroFactura, fecha.toString(), cliente.getDocumento(),
+                String.valueOf(vendedor.getIdEmpleado()), textoDetalles.toString());
     }
 
     public String generarComprobante() {
